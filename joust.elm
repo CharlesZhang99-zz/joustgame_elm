@@ -77,15 +77,15 @@ ai1Pos model =
               ({ model | ai1 = { pos = { x = model.ai1.pos.x + 10, y = model.ai1.pos.y}}}, Cmd.none)
 
 
-collision : Game -> ( Game, Cmd Msg )
-collision model =
+collision : ( Game , Cmd Msg ) -> ( Game, Cmd Msg )
+collision ( model, cmd ) =
       --({ model | isDead = False }, Cmd.none)
 --      let
 
       if ((model.position.y - model.ai1.pos.y) < 50) then
-              ({ model | isDead = True }, Cmd.none)
+              ({ model | isDead = True }, cmd)
       else
-              ({ model | isDead = False }, Cmd.none)
+              ({ model | isDead = False }, cmd)
 --      in
 
 
