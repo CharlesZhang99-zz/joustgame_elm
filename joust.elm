@@ -65,6 +65,7 @@ updateGame model =
       ( model )
           |> ai1Pos
           |> collision
+          |> momentum
 
 ai1Pos : Game -> ( Game, Cmd Msg )
 ai1Pos model =
@@ -88,6 +89,14 @@ collision ( model, cmd ) =
               ({ model | isDead = False }, cmd)
 --      in
 
+momentum : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
+momentum ( model , cmd ) =
+
+        if model.direction == Left then
+            ({ model | position = { x = model.position.x - 20, y = model.position.y} }, Cmd.none)
+        else if model.direction == Right then
+            ({ model | position = { x = model.position.x + 20, y = model.position.y} }, Cmd.none)
+        else ({ model | position = { x = model.position.x, y = model.position.y } }, Cmd.none)
 
 
 view : Game -> Html.Html Msg
