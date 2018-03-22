@@ -5,14 +5,17 @@ import Platform.Cmd as Cmd
 import Platform.Sub as Sub
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
+import Html.Attributes exposing (style)
 import Keyboard as Key
 import Time exposing (Time)
 import Window
+import Task
+
 
 {- Main -}
 main : Program Never Game Msg
 main = Html.program
-       {init = (init,Cmd.none),
+       {init = (init,initCmds),
         update = update,
         view   = view,
         subscriptions = subscriptions }
@@ -35,7 +38,9 @@ type alias Ai1 = {
         pos : Coords
                   }
 type Direction
-    = Left
+    = Up
+    | Down
+    | Left
     | Right
     | NoDirection
 
@@ -43,7 +48,7 @@ type Direction
 --type Msg = KeyMsg Key.KeyCode
 type Msg
     = KeyMsg Key.KeyCode
-    | SizeUpdate Window.Size
+    | SizeUpdated Window.Size
     | Tick Time
     | Nothing
 
@@ -51,16 +56,19 @@ init = ({ dimensions = Window.Size 0 0, position = {x = 300, y = 300}, ai1 = {po
 
 update : Msg -> Game -> (Game,Cmd.Cmd Msg)
 update msg model = case msg of
-      (KeyMsg keyCode) ->
-          movePos keyCode model
 
-      Nothing -> (model, Cmd.none)
+        SizeUpdated dimensions ->
+            ({ model | dimensions = dimensions }, Cmd.none )
 
-      SizeUpdate dimensions ->
-          ( { model | dimensions = dimensions }, Cmd.none )
+        KeyMsg keyCode ->
+            movePos keyCode model
 
-      Tick time ->
-          updateGame model
+        Nothing -> (model, Cmd.none)
+
+
+
+        Tick time ->
+            updateGame model
 
 scale : Window.Size -> ( String, String )
 scale size =
@@ -82,10 +90,10 @@ scale size =
 movePos : Int -> Game -> (Game, Cmd.Cmd Msg)
 movePos keyCode model =
     case keyCode of
-      87 -> ({ model | position = { x = model.position.x, y = model.position.y - 20 } }, Cmd.none)
-      83 -> ({ model | position = { x = model.position.x, y = model.position.y + 20 } }, Cmd.none)
-      65 -> ({ model | position = { x = model.position.x - 20, y = model.position.y }, direction = Left }, Cmd.none)
-      68 -> ({ model | position = { x = model.position.x + 20, y = model.position.y }, direction = Right }, Cmd.none)
+      87 -> ({ model | direction = Up }, Cmd.none)
+      83 -> ({ model | direction = Down }, Cmd.none)
+      65 -> ({ model | direction = Left }, Cmd.none)
+      68 -> ({ model | direction = Right }, Cmd.none)
       _ -> (model, Cmd.none)
 
 updateGame : Game -> ( Game, Cmd Msg )
@@ -120,12 +128,19 @@ collision ( model, cmd ) =
 momentum : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
 momentum ( model , cmd ) =
 
-        if model.direction == Left then
+        if model.direction == Up then
+            ({ model | position = { x = model.position.x, y = model.position.y - 20} }, Cmd.none)
+        else if model.direction == Down then
+            ({ model | position = { x = model.position.x, y = model.position.y + 20} }, Cmd.none)
+        else if model.direction == Left then
             ({ model | position = { x = model.position.x - 20, y = model.position.y} }, Cmd.none)
         else if model.direction == Right then
             ({ model | position = { x = model.position.x + 20, y = model.position.y} }, Cmd.none)
         else ({ model | position = { x = model.position.x, y = model.position.y } }, Cmd.none)
 
+size : String
+size =
+    "100"
 
 view : Game -> Html.Html Msg
 view model = let
@@ -133,9 +148,14 @@ view model = let
       posY = toString model.position.y
       ai1X = toString model.ai1.pos.x
       ai1Y = toString model.ai1.pos.y
+      ( scaledWidth, scaledHeight ) =
+          scale model.dimensions
+
+      parentStyle =
+          Html.Attributes.style [ ( "margin", "0 auto" ), ( "display", "block" ) ]
     in
         if model.isDead == False then
-            svg [width "100%",height "100%"]
+            svg [ width scaledWidth, height scaledHeight, viewBox "0 0 2000 1000", parentStyle ]
               (
               [rect [x posX,y posY, width "50", height "50", fill "red"] []]
               ++ [rect [x ai1X,y ai1Y, width "50", height "50", fill "blue"] []])
@@ -148,9 +168,13 @@ subscriptions : Game -> Sub Msg
 subscriptions model =
     Sub.batch [windowDimensionsChanged, Key.downs KeyMsg, tick]
 
+initCmds : Cmd Msg
+initCmds =
+    Task.perform SizeUpdated Window.size
+
 windowDimensionsChanged : Sub Msg
 windowDimensionsChanged =
-    Window.resizes SizeUpdate
+    Window.resizes SizeUpdated
 
 tick : Sub Msg
 tick =
