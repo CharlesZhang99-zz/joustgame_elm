@@ -7,6 +7,7 @@ import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Keyboard as Key
 import Time exposing (Time)
+import Window
 
 {- Main -}
 main : Program Never Game Msg
@@ -17,11 +18,17 @@ main = Html.program
         subscriptions = subscriptions }
 
 type alias Game = {
+        dimensions : Window.Size,
         position : Coords,
         ai1 : Ai1,
         direction : Direction,
         isDead : Bool
                    }
+
+type alias Block = {
+        x : Int,
+        y : Int
+                    }
 type alias Coords = { x : Int, y : Int }
 
 type alias Ai1 = {
@@ -36,10 +43,11 @@ type Direction
 --type Msg = KeyMsg Key.KeyCode
 type Msg
     = KeyMsg Key.KeyCode
+    | SizeUpdate Window.Size
     | Tick Time
     | Nothing
 
-init = ({ position = {x = 300, y = 300}, ai1 = {pos = {x = 100, y = 100}}, direction = NoDirection, isDead = False})
+init = ({ dimensions = Window.Size 0 0, position = {x = 300, y = 300}, ai1 = {pos = {x = 100, y = 100}}, direction = NoDirection, isDead = False})
 
 update : Msg -> Game -> (Game,Cmd.Cmd Msg)
 update msg model = case msg of
@@ -48,8 +56,28 @@ update msg model = case msg of
 
       Nothing -> (model, Cmd.none)
 
+      SizeUpdate dimensions ->
+          ( { model | dimensions = dimensions }, Cmd.none )
+
       Tick time ->
           updateGame model
+
+scale : Window.Size -> ( String, String )
+scale size =
+    let
+        toPixelStr =
+            \i -> round i |> toString
+
+        ( fWidth, fHeight ) =
+            ( toFloat size.width, toFloat size.height )
+
+        ( scaledX, scaledY ) =
+            if fWidth > fHeight then
+                ( fHeight / fWidth, 1.0 )
+            else
+                ( 1.0, fWidth / fHeight )
+    in
+        ( toPixelStr (fWidth * scaledX), toPixelStr (fHeight * scaledY) )
 
 movePos : Int -> Game -> (Game, Cmd.Cmd Msg)
 movePos keyCode model =
@@ -118,7 +146,11 @@ view model = let
 
 subscriptions : Game -> Sub Msg
 subscriptions model =
-    Sub.batch [Key.downs KeyMsg, tick]
+    Sub.batch [windowDimensionsChanged, Key.downs KeyMsg, tick]
+
+windowDimensionsChanged : Sub Msg
+windowDimensionsChanged =
+    Window.resizes SizeUpdate
 
 tick : Sub Msg
 tick =
