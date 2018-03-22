@@ -155,7 +155,7 @@ view model = let
           Html.Attributes.style [ ( "margin", "0 auto" ), ( "display", "block" ) ]
     in
         if model.isDead == False then
-            svg [ width scaledWidth, height scaledHeight, viewBox "0 0 2000 1000", parentStyle ]
+            svg [ width scaledWidth, height scaledHeight, viewBox "0 0 800 400", parentStyle ]
               (
               [rect [x posX,y posY, width "50", height "50", fill "red"] []]
               ++ [rect [x ai1X,y ai1Y, width "50", height "50", fill "blue"] []])
