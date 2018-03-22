@@ -25,7 +25,8 @@ type alias Game = {
         position : Coords,
         ai1 : Ai1,
         direction : Direction,
-        isDead : Bool
+        isDead : Bool,
+        blockSize : Float
                    }
 
 type alias Block = {
@@ -52,7 +53,12 @@ type Msg
     | Tick Time
     | Nothing
 
-init = ({ dimensions = Window.Size 0 0, position = {x = 300, y = 300}, ai1 = {pos = {x = 100, y = 100}}, direction = NoDirection, isDead = False})
+init = ({ dimensions = Window.Size 0 0,
+            position = {x = 0, y = 0},
+            ai1 = {pos = {x = 0, y = 0}},
+            direction = NoDirection,
+            isDead = False,
+            blockSize = 0})
 
 update : Msg -> Game -> (Game,Cmd.Cmd Msg)
 update msg model = case msg of
@@ -65,10 +71,89 @@ update msg model = case msg of
 
         Nothing -> (model, Cmd.none)
 
-
-
         Tick time ->
             updateGame model
+
+
+movePos : Int -> Game -> (Game, Cmd.Cmd Msg)
+movePos keyCode model =
+    case keyCode of
+      87 -> ({ model | direction = Up }, Cmd.none)
+      83 -> ({ model | direction = Down }, Cmd.none)
+      65 -> ({ model | direction = Left }, Cmd.none)
+      68 -> ({ model | direction = Right }, Cmd.none)
+      _ -> (model, Cmd.none)
+
+updateGame : Game -> ( Game, Cmd Msg )
+updateGame model =
+        ( model )
+            |> blockSize
+            |> ai1Pos
+            |> collision
+            |> momentum
+            |> outOfScreen
+{-
+blockSize : Game -> ( Game, Cmd Msg )
+blockSize model =
+    let
+        ( scaledWidth, scaledHeight ) =
+            scale model.dimensions
+        a = Result.withDefault 0 (String.toFloat scaledWidth)
+    in  ( { model | blockSize = (a/800.0)}, Cmd.none)
+    -}
+
+blockSize : Game -> ( Game, Cmd Msg )
+blockSize model =
+    ( { model | blockSize = (toFloat (winWidth model.dimensions))/800.0}, Cmd.none)
+
+
+ai1Pos : ( Game, Cmd Msg ) -> ( Game, Cmd Msg )
+ai1Pos (model, cmd) =
+      let
+          ab = True
+      in
+          if model.ai1.pos.x > 800 then
+              ({ model | ai1 = { pos = { x = 0, y = model.ai1.pos.y}}}, Cmd.none)
+          else
+              ({ model | ai1 = { pos = { x = model.ai1.pos.x + 10, y = model.ai1.pos.y}}}, Cmd.none)
+
+
+collision : ( Game , Cmd Msg ) -> ( Game, Cmd Msg )
+collision ( model, cmd ) =
+      --({ model | isDead = False }, Cmd.none)
+--      let
+
+      if ((model.position.y - model.ai1.pos.y) < 50) then
+              ({ model | isDead = False }, cmd)
+      else
+              ({ model | isDead = False }, cmd)
+--      in
+
+momentum : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
+momentum ( model , cmd ) =
+
+        if model.direction == Up then
+            ({ model | position = { x = model.position.x, y = model.position.y - 20} }, Cmd.none)
+        else if model.direction == Down then
+            ({ model | position = { x = model.position.x, y = model.position.y + 20} }, Cmd.none)
+        else if model.direction == Left then
+            ({ model | position = { x = model.position.x - 20, y = model.position.y} }, Cmd.none)
+        else if model.direction == Right then
+            ({ model | position = { x = model.position.x + 20, y = model.position.y} }, Cmd.none)
+        else ({ model | position = { x = model.position.x, y = model.position.y } }, Cmd.none)
+
+
+outOfScreen : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
+outOfScreen ( model , cmd) =
+        if model.position.x > 800 then
+            ({ model | position = { x = 0, y = model.position.y} }, Cmd.none)
+        else if model.position.y < 0 then
+            ({ model | position = { x = model.position.x, y = 400} }, Cmd.none)
+        else ({ model | position = { x = model.position.x, y = model.position.y } }, Cmd.none)
+
+backgroundColor : Attribute Msg
+backgroundColor =
+    fill "Black"
 
 scale : Window.Size -> ( String, String )
 scale size =
@@ -87,60 +172,11 @@ scale size =
     in
         ( toPixelStr (fWidth * scaledX), toPixelStr (fHeight * scaledY) )
 
-movePos : Int -> Game -> (Game, Cmd.Cmd Msg)
-movePos keyCode model =
-    case keyCode of
-      87 -> ({ model | direction = Up }, Cmd.none)
-      83 -> ({ model | direction = Down }, Cmd.none)
-      65 -> ({ model | direction = Left }, Cmd.none)
-      68 -> ({ model | direction = Right }, Cmd.none)
-      _ -> (model, Cmd.none)
-
-updateGame : Game -> ( Game, Cmd Msg )
-updateGame model =
-      ( model )
-          |> ai1Pos
-          |> collision
-          |> momentum
-
-ai1Pos : Game -> ( Game, Cmd Msg )
-ai1Pos model =
-      let
-          ab = True
-      in
-          if model.ai1.pos.x > 1000 then
-              ({ model | ai1 = { pos = { x = 0, y = model.ai1.pos.y}}}, Cmd.none)
-          else
-              ({ model | ai1 = { pos = { x = model.ai1.pos.x + 10, y = model.ai1.pos.y}}}, Cmd.none)
+winWidth : Window.Size -> Int
+winWidth size = size.width
 
 
-collision : ( Game , Cmd Msg ) -> ( Game, Cmd Msg )
-collision ( model, cmd ) =
-      --({ model | isDead = False }, Cmd.none)
---      let
 
-      if ((model.position.y - model.ai1.pos.y) < 50) then
-              ({ model | isDead = True }, cmd)
-      else
-              ({ model | isDead = False }, cmd)
---      in
-
-momentum : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
-momentum ( model , cmd ) =
-
-        if model.direction == Up then
-            ({ model | position = { x = model.position.x, y = model.position.y - 20} }, Cmd.none)
-        else if model.direction == Down then
-            ({ model | position = { x = model.position.x, y = model.position.y + 20} }, Cmd.none)
-        else if model.direction == Left then
-            ({ model | position = { x = model.position.x - 20, y = model.position.y} }, Cmd.none)
-        else if model.direction == Right then
-            ({ model | position = { x = model.position.x + 20, y = model.position.y} }, Cmd.none)
-        else ({ model | position = { x = model.position.x, y = model.position.y } }, Cmd.none)
-
-size : String
-size =
-    "100"
 
 view : Game -> Html.Html Msg
 view model = let
@@ -155,14 +191,18 @@ view model = let
           Html.Attributes.style [ ( "margin", "0 auto" ), ( "display", "block" ) ]
     in
         if model.isDead == False then
-            svg [ width scaledWidth, height scaledHeight, viewBox "0 0 800 400", parentStyle ]
-              (
-              [rect [x posX,y posY, width "50", height "50", fill "red"] []]
+            svg [ width scaledWidth, height scaledHeight, viewBox "0 0 400 500", parentStyle ]
+              ([ renderBackground ]
+              ++ [rect [x posX,y posY, width "50", height "50", fill "red"] []]
               ++ [rect [x ai1X,y ai1Y, width "50", height "50", fill "blue"] []])
         else
             svg [width "0%",height "0%"]
               (
               [rect [x posX,y posY, width "50", height "50", fill "red"] []])
+
+renderBackground : Svg Msg
+renderBackground =
+    rect [ x "0", y "0", width "800", height "400", backgroundColor ] []
 
 subscriptions : Game -> Sub Msg
 subscriptions model =
