@@ -28,7 +28,8 @@ type alias Game = {
         previousDirection: Direction,
         isDead : Bool,
         blockSize : Float,
-        momentumCounter : Int,
+        momentumSpeedCounter : Int,
+        directionMomentumCounter : Int,
         upMomentumCounter : Int
                    }
 
@@ -59,7 +60,8 @@ init = ({ dimensions = Window.Size 0 0,
             previousDirection = NoDirection,
             isDead = False,
             blockSize = 0,
-            momentumCounter = 0,
+            momentumSpeedCounter = 0,
+            directionMomentumCounter = 0,
             upMomentumCounter = 0})
 
 update : Msg -> Game -> (Game,Cmd.Cmd Msg)
@@ -79,7 +81,7 @@ update msg model = case msg of
 movePos : Int -> Game -> (Game, Cmd.Cmd Msg)
 movePos keyCode model =
     case keyCode of
-      87 -> ({ model | previousDirection = model.direction, upMomentumCounter = 10 }, Cmd.none)
+      87 -> ({ model | previousDirection = model.direction, upMomentumCounter = 9 }, Cmd.none)
       --83 -> ({ model | previousDirection = model.direction, direction = Down }, Cmd.none)
       65 -> ({ model | previousDirection = model.direction, direction = Left }, Cmd.none)
       68 -> ({ model | previousDirection = model.direction, direction = Right }, Cmd.none)
@@ -131,10 +133,10 @@ updateDirection ( model , cmd )= ({ model | previousDirection = model.direction,
 momentum : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
 momentum ( model , cmd ) =
     let
-        reset =         if model.previousDirection == model.direction then model.momentumCounter
+        reset =         if model.previousDirection == model.direction then model.momentumSpeedCounter
                         else 0
         moreSpeed =     --if reset /= 0 then
-                        if ((model.momentumCounter > -3) && (model.momentumCounter < 3)) then 1
+                        if ((model.momentumSpeedCounter > -3) && (model.momentumSpeedCounter < 3)) then 1
                         else 0
                         --else 0
         newCounter = reset + moreSpeed
@@ -146,9 +148,9 @@ momentum ( model , cmd ) =
             ({ model | position = { x = model.position.x, y = model.position.y} }, Cmd.none)
             --}
         if model.direction == Left then
-            ({ model | position = { x = model.position.x - speed, y = model.position.y}, momentumCounter = newCounter}, Cmd.none)
+            ({ model | position = { x = model.position.x - speed, y = model.position.y}, momentumSpeedCounter = newCounter}, Cmd.none)
         else if model.direction == Right then
-            ({ model | position = { x = model.position.x + speed, y = model.position.y}, momentumCounter = newCounter}, Cmd.none)
+            ({ model | position = { x = model.position.x + speed, y = model.position.y}, momentumSpeedCounter = newCounter}, Cmd.none)
         else ({ model | position = { x = model.position.x, y = model.position.y } }, Cmd.none)
 
 upMomentum : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
@@ -164,16 +166,15 @@ upMomentum ( model , cmd ) =
 upSpeedConversion : Int -> Int
 upSpeedConversion speed =
     if speed == 0 then 0
-    else if speed == 1 then 5
-    else if speed == 2 then 10
-    else if speed == 3 then 15
-    else if speed == 4 then 20
-    else if speed == 5 then 25
-    else if speed == 6 then 30
-    else if speed == 7 then 35
-    else if speed == 8 then 40
-    else if speed == 9 then 45
-    else if speed == 10 then 50
+    else if speed == 1 then 3
+    else if speed == 2 then 6
+    else if speed == 3 then 9
+    else if speed == 4 then 12
+    else if speed == 5 then 15
+    else if speed == 6 then 18
+    else if speed == 7 then 21
+    else if speed == 8 then 24
+    else if speed == 9 then 27
     else 0
 
 {--
@@ -192,6 +193,10 @@ outOfScreen : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
 outOfScreen ( model , cmd) =
         if model.position.x > 800 then
             ({ model | position = { x = 0, y = model.position.y} }, Cmd.none)
+        else if model.position.x < 0 then
+            ({ model | position = { x = 800, y = model.position.y} }, Cmd.none)
+        else if model.position.y > 400 then
+            ({ model | position = { x = model.position.x, y = 0} }, Cmd.none)
         else if model.position.y < 0 then
             ({ model | position = { x = model.position.x, y = 400} }, Cmd.none)
         else ({ model | position = { x = model.position.x, y = model.position.y } }, Cmd.none)
@@ -222,13 +227,21 @@ winWidth size = size.width
 
 speedConversion : Game -> Int
 speedConversion model =
-    if model.momentumCounter == -3 then 30
-    else if model.momentumCounter == -2 then 20
-    else if model.momentumCounter == -1 then 10
-    else if model.momentumCounter == 0 then 0
-    else if model.momentumCounter == 1 then 10
-    else if model.momentumCounter == 2 then 20
-    else if model.momentumCounter == 3 then 30
+    if model.momentumSpeedCounter == -7 then 10
+    else if model.momentumSpeedCounter == -6 then 20
+    else if model.momentumSpeedCounter == -5 then 30
+    else if model.momentumSpeedCounter == -4 then 30
+    else if model.momentumSpeedCounter == -3 then 30
+    else if model.momentumSpeedCounter == -2 then 20
+    else if model.momentumSpeedCounter == -1 then 10
+    else if model.momentumSpeedCounter == 0 then 0
+    else if model.momentumSpeedCounter == 1 then 10
+    else if model.momentumSpeedCounter == 2 then 20
+    else if model.momentumSpeedCounter == 3 then 30
+    else if model.momentumSpeedCounter == 4 then 30
+    else if model.momentumSpeedCounter == 5 then 30
+    else if model.momentumSpeedCounter == 6 then 20
+    else if model.momentumSpeedCounter == 7 then 10
     else 0
 
 view : Game -> Html.Html Msg
