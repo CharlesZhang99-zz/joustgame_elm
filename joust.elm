@@ -1,3 +1,4 @@
+
 module SvgAnimation exposing (..)
 
 import Html as Html
@@ -26,7 +27,9 @@ type alias Game = {
         ai1 : Ai1,
         direction : Direction,
         isDead : Bool,
-        blockSize : Float
+        blockSize : Float,
+        momentumCounter : Int,
+        speed : Int
                    }
 
 type alias Block = {
@@ -45,8 +48,6 @@ type Direction
     | Right
     | NoDirection
 
-
---type Msg = KeyMsg Key.KeyCode
 type Msg
     = KeyMsg Key.KeyCode
     | SizeUpdated Window.Size
@@ -54,11 +55,13 @@ type Msg
     | Nothing
 
 init = ({ dimensions = Window.Size 0 0,
-            position = {x = 0, y = 0},
+            position = {x = 100, y = 100},
             ai1 = {pos = {x = 0, y = 0}},
             direction = NoDirection,
             isDead = False,
-            blockSize = 0})
+            blockSize = 0,
+            momentumCounter = 0,
+            speed = 0})
 
 update : Msg -> Game -> (Game,Cmd.Cmd Msg)
 update msg model = case msg of
@@ -92,15 +95,6 @@ updateGame model =
             |> collision
             |> momentum
             |> outOfScreen
-{-
-blockSize : Game -> ( Game, Cmd Msg )
-blockSize model =
-    let
-        ( scaledWidth, scaledHeight ) =
-            scale model.dimensions
-        a = Result.withDefault 0 (String.toFloat scaledWidth)
-    in  ( { model | blockSize = (a/800.0)}, Cmd.none)
-    -}
 
 blockSize : Game -> ( Game, Cmd Msg )
 blockSize model =
@@ -131,15 +125,20 @@ collision ( model, cmd ) =
 
 momentum : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
 momentum ( model , cmd ) =
-
+    {--let
+        if (model.momentumCounter) >3 and (model.momentum < 3) then
+            moreSpeed = 1
+        else moreSpeed = 0
+    in
+-}
         if model.direction == Up then
             ({ model | position = { x = model.position.x, y = model.position.y - 20} }, Cmd.none)
         else if model.direction == Down then
             ({ model | position = { x = model.position.x, y = model.position.y + 20} }, Cmd.none)
         else if model.direction == Left then
-            ({ model | position = { x = model.position.x - 20, y = model.position.y} }, Cmd.none)
+            ({ model | position = { x = model.position.x - model.speed, y = model.position.y}, momentumCounter = model.momentumCounter - 1, speed = 20}, Cmd.none)
         else if model.direction == Right then
-            ({ model | position = { x = model.position.x + 20, y = model.position.y} }, Cmd.none)
+            ({ model | position = { x = model.position.x + model.speed, y = model.position.y}, momentumCounter = model.momentumCounter + 1, speed = 20}, Cmd.none)
         else ({ model | position = { x = model.position.x, y = model.position.y } }, Cmd.none)
 
 
@@ -175,15 +174,26 @@ scale size =
 winWidth : Window.Size -> Int
 winWidth size = size.width
 
-
+{-momentumConversion : Game -> Int
+momentumConversion model =
+    a = model.momentumCounter
+    case a of
+        -3 -> ("30")
+        -2 -> ("15")
+        -1 -> ("5")
+        0 -> ("0")
+        1 -> ("5")
+        2 -> ("15")
+        3 -> ("30")
+    -}
 
 
 view : Game -> Html.Html Msg
 view model = let
-      posX = toString model.position.x
-      posY = toString model.position.y
-      ai1X = toString model.ai1.pos.x
-      ai1Y = toString model.ai1.pos.y
+      posX = toString (toFloat model.position.x * model.blockSize)
+      posY = toString (toFloat model.position.y * model.blockSize)
+      ai1X = toString (toFloat model.ai1.pos.x * model.blockSize)
+      ai1Y = toString (toFloat model.ai1.pos.y * model.blockSize)
       ( scaledWidth, scaledHeight ) =
           scale model.dimensions
 
@@ -191,18 +201,18 @@ view model = let
           Html.Attributes.style [ ( "margin", "0 auto" ), ( "display", "block" ) ]
     in
         if model.isDead == False then
-            svg [ width scaledWidth, height scaledHeight, viewBox "0 0 400 500", parentStyle ]
-              ([ renderBackground ]
+            svg [width "100%",height "100%"]
+              ([ renderBackground model ]
               ++ [rect [x posX,y posY, width "50", height "50", fill "red"] []]
               ++ [rect [x ai1X,y ai1Y, width "50", height "50", fill "blue"] []])
         else
             svg [width "0%",height "0%"]
               (
-              [rect [x posX,y posY, width "50", height "50", fill "red"] []])
+              [rect [x "posX",y "posY", width "50", height "50", fill "red"] []])
 
-renderBackground : Svg Msg
-renderBackground =
-    rect [ x "0", y "0", width "800", height "400", backgroundColor ] []
+renderBackground : Game -> Svg Msg
+renderBackground model =
+    rect [ x "0", y "0", width "100%", height "100%", backgroundColor ] []
 
 subscriptions : Game -> Sub Msg
 subscriptions model =
