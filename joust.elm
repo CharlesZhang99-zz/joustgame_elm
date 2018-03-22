@@ -1,4 +1,3 @@
-
 module SvgAnimation exposing (..)
 
 import Html as Html
@@ -26,10 +25,10 @@ type alias Game = {
         position : Coords,
         ai1 : Ai1,
         direction : Direction,
+        previousDirection: Direction,
         isDead : Bool,
         blockSize : Float,
-        momentumCounter : Int,
-        speed : Int
+        momentumCounter : Int
                    }
 
 type alias Block = {
@@ -58,19 +57,18 @@ init = ({ dimensions = Window.Size 0 0,
             position = {x = 100, y = 100},
             ai1 = {pos = {x = 0, y = 0}},
             direction = NoDirection,
+            previousDirection = NoDirection,
             isDead = False,
             blockSize = 0,
-            momentumCounter = 0,
-            speed = 0})
+            momentumCounter = 0})
 
 update : Msg -> Game -> (Game,Cmd.Cmd Msg)
 update msg model = case msg of
+        KeyMsg keyCode ->
+            movePos keyCode model
 
         SizeUpdated dimensions ->
             ({ model | dimensions = dimensions }, Cmd.none )
-
-        KeyMsg keyCode ->
-            movePos keyCode model
 
         Nothing -> (model, Cmd.none)
 
@@ -81,10 +79,10 @@ update msg model = case msg of
 movePos : Int -> Game -> (Game, Cmd.Cmd Msg)
 movePos keyCode model =
     case keyCode of
-      87 -> ({ model | direction = Up }, Cmd.none)
-      83 -> ({ model | direction = Down }, Cmd.none)
-      65 -> ({ model | direction = Left }, Cmd.none)
-      68 -> ({ model | direction = Right }, Cmd.none)
+      87 -> ({ model | previousDirection = model.direction, direction = Up }, Cmd.none)
+      83 -> ({ model | previousDirection = model.direction, direction = Down }, Cmd.none)
+      65 -> ({ model | previousDirection = model.direction, direction = Left }, Cmd.none)
+      68 -> ({ model | previousDirection = model.direction, direction = Right }, Cmd.none)
       _ -> (model, Cmd.none)
 
 updateGame : Game -> ( Game, Cmd Msg )
@@ -94,6 +92,7 @@ updateGame model =
             |> ai1Pos
             |> collision
             |> momentum
+            |> updateDirection
             |> outOfScreen
 
 blockSize : Game -> ( Game, Cmd Msg )
@@ -123,24 +122,42 @@ collision ( model, cmd ) =
               ({ model | isDead = False }, cmd)
 --      in
 
+updateDirection : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
+updateDirection ( model , cmd )= ({ model | previousDirection = model.direction, direction = model.direction }, Cmd.none)
+
+
 momentum : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
 momentum ( model , cmd ) =
-    {--let
-        if (model.momentumCounter) >3 and (model.momentum < 3) then
-            moreSpeed = 1
-        else moreSpeed = 0
+    let
+        reset =         if model.previousDirection == model.direction then model.momentumCounter
+                        else 0
+        moreSpeed =     --if reset /= 0 then
+                        if ((model.momentumCounter > -3) && (model.momentumCounter < 3)) then 1
+                        else 0
+                        --else 0
+        newCounter = reset + moreSpeed
+        speed = speedChanges model
     in
--}
         if model.direction == Up then
             ({ model | position = { x = model.position.x, y = model.position.y - 20} }, Cmd.none)
         else if model.direction == Down then
             ({ model | position = { x = model.position.x, y = model.position.y + 20} }, Cmd.none)
         else if model.direction == Left then
-            ({ model | position = { x = model.position.x - model.speed, y = model.position.y}, momentumCounter = model.momentumCounter - 1, speed = 20}, Cmd.none)
+            ({ model | position = { x = model.position.x - speed, y = model.position.y}, momentumCounter = newCounter}, Cmd.none)
         else if model.direction == Right then
-            ({ model | position = { x = model.position.x + model.speed, y = model.position.y}, momentumCounter = model.momentumCounter + 1, speed = 20}, Cmd.none)
+            ({ model | position = { x = model.position.x + speed, y = model.position.y}, momentumCounter = newCounter}, Cmd.none)
         else ({ model | position = { x = model.position.x, y = model.position.y } }, Cmd.none)
 
+speedChanges : Game -> Int
+speedChanges model =
+    if model.momentumCounter == -3 then 30
+    else if model.momentumCounter == -2 then 20
+    else if model.momentumCounter == -1 then 10
+    else if model.momentumCounter == 0 then 0
+    else if model.momentumCounter == 1 then 10
+    else if model.momentumCounter == 2 then 20
+    else if model.momentumCounter == 3 then 30
+    else 0
 
 outOfScreen : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
 outOfScreen ( model , cmd) =
