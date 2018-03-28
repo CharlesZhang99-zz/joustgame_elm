@@ -21,27 +21,31 @@ main = Html.program
         subscriptions = subscriptions }
 
 type alias Game = {
-        dimensions : Window.Size,
-        position : Coords,
-        ai1 : Ai1,
-        direction : Direction,
-        previousDirection: Direction,
-        isDead : Bool,
-        blockSize : Float,
-        momentumSpeedCounter : Int,
-        directionMomentumCounter : Int,
-        upMomentumCounter : Int
+        dimensions                  : Window.Size,
+        position                    : Coords,
+        ai1                         : Ai1,
+        direction                   : Direction,
+        previousDirection           : Direction,
+        isDead                      : Bool,
+        blockSize                   : Float,
+        momentumSpeedCounter        : Int,
+        directionMomentumCounter    : Int,
+        upMomentumCounter           : Int
                    }
 
-type alias Block = {
-        x : Int,
-        y : Int
-                    }
 type alias Coords = { x : Int, y : Int }
 
 type alias Ai1 = {
         pos : Coords
                   }
+type alias Platform = {
+        leftPos   : Int,
+        rightPos  : Int,
+        upPos     : Int,
+        downPos   : Int,
+        playerPos : Int
+                        }
+
 type Direction
     = Left
     | Right
@@ -99,6 +103,10 @@ updateGame model =
             |> gravity
             |> upMomentum
             |> updateDirection
+            |> basePlatform
+            |> leftPlatform
+            |> middlePlatform
+            |> rightPlatform
             |> outOfScreen
 
 blockSize : Game -> ( Game, Cmd Msg )
@@ -127,8 +135,6 @@ collision ( model, cmd ) =
       else
               ({ model | isDead = False }, cmd)
 --      in
-
---platform : ( Game, Cmd Msg ) ->
 
 updateDirection : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
 updateDirection ( model , cmd )= ({ model | previousDirection = model.direction, direction = model.direction }, Cmd.none)
@@ -195,7 +201,75 @@ gravity ( model, cmd ) =
     -}
 gravity : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
 gravity ( model, cmd ) =
-    ({ model | position = { x = model.position.x, y = model.position.y + 3} }, Cmd.none)
+    ({ model | position = { x = model.position.x, y = model.position.y + 4} }, Cmd.none)
+
+basePlatform : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
+basePlatform ( model, cmd ) =
+    let
+        leftPos = (round ((39.0 * 800)/236)) - 25
+        rightPos = (round (800.0 - ((48.0 * 800))/236)) - 25
+        upPos = (400 - 50 - (round ((21.0 * 400)/118)))
+        downPos = (400 - 50 - (round ((15.0 * 400)/118)))
+    in
+        if (model.position.y > upPos) && (model.position.y < downPos)
+            && (model.position.x > leftPos) && (model.position.x < rightPos)
+            then ({ model | position = { x = model.position.x, y = upPos} }, Cmd.none)
+        else ({ model | position = { x = model.position.x, y = model.position.y} }, Cmd.none)
+        {--
+basePlatform : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
+basePlatform ( model , cmd) =
+    --&& ((model.position.x >  (round ((39.0 * 400)/118))) && model.position.x < (round (((400.0-48) * 400)/118)))
+    --(model.position.x > (round ((39.0 * 800)/236))) &&
+    if (model.position.y > (400 - 50 - (round ((21.0 * 400)/118)))) && (model.position.y < (400 - 50 - (round ((15.0 * 400)/118))))
+        && (model.position.x + 25 > (round ((39.0 * 800)/236))) && (model.position.x + 25 < (round (800.0 - ((48.0 * 800))/236)))
+        --&& (model.position.y < round ((450*400)/118))
+        then ({ model | position = { x = model.position.x, y = 400 - 50 - (round ((21.0 * 400)/118))} }, Cmd.none)
+    else ({ model | position = { x = model.position.x, y = model.position.y} }, Cmd.none)
+
+-}
+leftPlatform : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
+leftPlatform ( model , cmd ) =
+    let
+        leftPos = 0 - 25
+        rightPos = (round ((49 * 400)/118))-25
+        upPos = (round ((31 * 400)/118))-50
+        downPos = (round ((33 * 400)/118))-50
+    in
+        if (model.position.y > upPos) && (model.position.y < downPos)
+            && (model.position.x > leftPos) && (model.position.x < rightPos)
+            then ({ model | position = { x = model.position.x, y = upPos} }, Cmd.none)
+        else ({ model | position = { x = model.position.x, y = model.position.y} }, Cmd.none)
+    {--
+    if (model.position.x + 25 > 0) && ((model.position.x + 25) < (round ((49.0 * 800)/236)))
+        then ({ model | position = { x = model.position.x, y = (round (((24.0 - 8) * 400)/118))} }, Cmd.none)
+    else ({ model | position = { x = model.position.x, y = model.position.y} }, Cmd.none)
+-}
+
+middlePlatform : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
+middlePlatform ( model , cmd ) =
+    let
+        leftPos = (round ((81 * 400)/118))-25
+        rightPos = (round ((132 * 400)/118))-25
+        upPos = (round ((54 * 400)/118))-50
+        downPos = (round ((56 * 400)/118))-50
+    in
+        if (model.position.y > upPos) && (model.position.y < downPos)
+            && (model.position.x > leftPos) && (model.position.x < rightPos)
+            then ({ model | position = { x = model.position.x, y = upPos} }, Cmd.none)
+        else ({ model | position = { x = model.position.x, y = model.position.y} }, Cmd.none)
+
+rightPlatform : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
+rightPlatform ( model , cmd ) =
+    let
+        leftPos = (round (((236-35) * 400)/118))-25
+        rightPos = (round ((236 * 400)/118)) - 25
+        upPos = (round ((31 * 400)/118))-50
+        downPos = (round ((33 * 400)/118))-50
+    in
+        if (model.position.y > upPos) && (model.position.y < downPos)
+            && (model.position.x > leftPos) && (model.position.x < rightPos)
+            then ({ model | position = { x = model.position.x, y = upPos} }, Cmd.none)
+        else ({ model | position = { x = model.position.x, y = model.position.y} }, Cmd.none)
 
 outOfScreen : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
 outOfScreen ( model , cmd) =
@@ -203,8 +277,8 @@ outOfScreen ( model , cmd) =
             ({ model | position = { x = 0, y = model.position.y} }, Cmd.none)
         else if model.position.x < 0 then
             ({ model | position = { x = 800, y = model.position.y} }, Cmd.none)
-        else if model.position.y > 400 then
-            ({ model | position = { x = model.position.x, y = 0} }, Cmd.none)
+        --else if model.position.y > 400 - 50 - (round ((21.0 * 400)/118)) then
+        --    ({ model | position = { x = model.position.x, y = 400 - 50 - (round ((21.0 * 400)/118))} }, Cmd.none)
         else if model.position.y < 0 then
             ({ model | position = { x = model.position.x, y = 0} }, Cmd.none)
         else ({ model | position = { x = model.position.x, y = model.position.y } }, Cmd.none)
@@ -234,7 +308,24 @@ winWidth : Window.Size -> Int
 winWidth size = size.width
 
 speedConversion : Game -> Int
-speedConversion model =
+speedConversion model = case model.momentumSpeedCounter of
+    (-7) -> 3
+    (-6) -> 6
+    (-5) -> 9
+    (-4) -> 9
+    (-3) -> 9
+    (-2) -> 6
+    (-1) -> 3
+    0 -> 0
+    1 -> 3
+    2 -> 6
+    3 -> 9
+    4 -> 9
+    5 -> 9
+    6 -> 6
+    7 -> 3
+    _ -> 0
+    {--
     if model.momentumSpeedCounter == -7 then 3
     else if model.momentumSpeedCounter == -6 then 6
     else if model.momentumSpeedCounter == -5 then 9
@@ -251,7 +342,7 @@ speedConversion model =
     else if model.momentumSpeedCounter == 6 then 6
     else if model.momentumSpeedCounter == 7 then 3
     else 0
-
+    -}
 
 view : Game -> Html.Html Msg
 view model = let
