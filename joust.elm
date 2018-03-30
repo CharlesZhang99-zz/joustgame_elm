@@ -411,11 +411,43 @@ view model = let
 renderBackground : Game -> Svg Msg
 renderBackground model =
     rect [ x "0", y "0", width "100%", height "100%", backgroundColor ] []
-
+{--
 subscriptions : Game -> Sub Msg
 subscriptions model =
     Sub.batch [windowDimensionsChanged, Key.downs KeyMsg, tick]
+-}
+subscriptions : Game -> Sub Msg
+subscriptions model =
+    let
+        window = windowDimensionsChanged
+        keys = Key.downs KeyMsg
+        ticks = tick
+    in
+        Sub.batch [window, keys, ticks]
+{--
+subscriptions : Model -> Sub Msg
+subscriptions {ui} =
+  let
+      window = Window.resizes (\{width,height} -> ResizeWindow (width,height))
+      keys = [ Keyboard.downs (KeyChange True)
+             , Keyboard.ups (KeyChange False)
+             ]
+      animation = [ AnimationFrame.diffs Tick ]
+      seconds = Time.every Time.second TimeSecond
+  in
+     (
+     case ui.screen of
+       StartScreen ->
+         [ window, seconds ]
 
+       PlayScreen ->
+         [ window ] ++ keys ++ animation
+
+       GameoverScreen ->
+         [ window ] ++ keys
+
+     ) |> Sub.batch
+-}
 initCmds : Cmd Msg
 initCmds =
     Task.perform SizeUpdated Window.size
