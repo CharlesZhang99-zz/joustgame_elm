@@ -6,7 +6,8 @@ import Platform.Sub as Sub
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Html.Attributes exposing (style)
-import Keyboard as Key
+import Set exposing (Set)
+import Keyboard exposing (..)
 import Time exposing (Time)
 import Window
 import Task
@@ -50,9 +51,10 @@ type Direction
     = Left
     | Right
     | NoDirection
-
+--KeyMsg Keyboard.KeyCode
 type Msg
-    = KeyMsg Key.KeyCode
+    = KeyDown KeyCode
+    | KeyUp KeyCode
     | SizeUpdated Window.Size
     | Tick Time
     | Nothing
@@ -70,8 +72,11 @@ init = ({ dimensions = Window.Size 0 0,
 
 update : Msg -> Game -> (Game,Cmd.Cmd Msg)
 update msg model = case msg of
-        KeyMsg keyCode ->
+        KeyDown keyCode ->
             movePos keyCode model
+
+        KeyUp keyCode ->
+            (model, Cmd.none )
 
         SizeUpdated dimensions ->
             ({ model | dimensions = dimensions }, Cmd.none )
@@ -416,15 +421,18 @@ subscriptions : Game -> Sub Msg
 subscriptions model =
     Sub.batch [windowDimensionsChanged, Key.downs KeyMsg, tick]
 -}
+
 subscriptions : Game -> Sub Msg
 subscriptions model =
     let
         window = windowDimensionsChanged
-        keys = Key.downs KeyMsg
+        --keys = Keyboard.downs KeyMsg
+        keysD = Keyboard.downs KeyDown
+        keysU = Keyboard.ups KeyUp
         ticks = tick
     in
-        Sub.batch [window, keys, ticks]
-{--
+        Sub.batch [window, keysD, keysU, ticks]
+{-
 subscriptions : Model -> Sub Msg
 subscriptions {ui} =
   let
@@ -447,6 +455,53 @@ subscriptions {ui} =
          [ window ] ++ keys
 
      ) |> Sub.batch
+
+update : Msg -> Model -> (Model, Cmd Msg)
+update action ({ui,scene} as model) =
+  case action of
+    ResizeWindow dimensions ->
+      ({ model | ui = { ui | windowSize = dimensions } }, Cmd.none)
+
+    Tick delta ->
+      let
+          player1 = scene.player1 |> steerAndGravity delta ui
+          player2 = scene.player2 |> steerAndGravity delta ui
+          round = scene.round
+          (player1_, player2_) = handleCollisions player1 player2
+          player1__ = player1_ |> movePlayer delta
+          player2__ = player2_ |> movePlayer delta
+          hasAnyPlayerFallen = hasFallen player1 || hasFallen player2
+          isRoundOver = hasAnyPlayerFallen && round.touchdownTime > 1400
+          (player1___, player2___) = applyScores player1__ player2__ isRoundOver
+          isGameOver = player1___.score>=winScore || player2___.score>=winScore
+          (round_, screen_) =
+            if isGameOver then
+               (round, GameoverScreen)
+            else if isRoundOver then
+               (newRound, PlayScreen)
+            else if hasAnyPlayerFallen then
+              ({ round | touchdownTime = round.touchdownTime + delta }, PlayScreen)
+            else
+              (round, PlayScreen)
+          scene_ = { scene | player1 = player1___
+                           , player2 = player2___
+                           , round = round_ }
+          ui_ = { ui | screen = screen_ }
+      in
+          ({ model | scene = scene_, ui = ui_ }, Cmd.none)
+
+    KeyChange pressed keycode ->
+      (handleKeyChange pressed keycode model, Cmd.none)
+
+    StartGame ->
+      (freshGame ui, Cmd.none)
+
+    TimeSecond _ ->
+      ({ model | secondsPassed = model.secondsPassed+1 }, Cmd.none)
+
+    NoOp ->
+      (model, Cmd.none)
+
 -}
 initCmds : Cmd Msg
 initCmds =
