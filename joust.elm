@@ -24,7 +24,7 @@ main = Html.program
 type alias Game = {
         dimensions                  : Window.Size,
         position                    : Coords,
-        ai1                         : Ai1,
+        ai1                         : Ai,
         direction                   : Direction,
         previousDirection           : Direction,
         isDead                      : Bool,
@@ -32,13 +32,15 @@ type alias Game = {
         momentumSpeedCounter        : Int,
         directionMomentumCounter    : Int,
         upMomentumCounter           : Int,
-        keysDown                    : Set KeyCode
+        keysDown                    : Set KeyCode,
+        keySum                      : Int
                    }
 
 type alias Coords = { x : Int, y : Int }
 
-type alias Ai1 = {
-        pos : Coords
+type alias Ai = {
+        pos : Coords,
+        isDead : Bool
                   }
 type alias Platform = {
         leftPos   : Int,
@@ -62,7 +64,7 @@ type Msg
 
 init = ({ dimensions = Window.Size 0 0,
             position = {x = 100, y = 100},
-            ai1 = {pos = {x = 0, y = 0}},
+            ai1 = {pos = {x = 0, y = 0}, isDead = False},
             direction = NoDirection,
             previousDirection = NoDirection,
             isDead = False,
@@ -70,7 +72,8 @@ init = ({ dimensions = Window.Size 0 0,
             momentumSpeedCounter = 0,
             directionMomentumCounter = 0,
             upMomentumCounter = 0,
-            keysDown = Set.empty})
+            keysDown = Set.empty,
+            keySum = 0})
 
 update : Msg -> Game -> (Game,Cmd.Cmd Msg)
 update msg model = case msg of
@@ -112,7 +115,7 @@ updateGame : Game -> ( Game, Cmd Msg )
 updateGame model =
         ( model )
             |> blockSize
-            |> ai1Pos
+            --|> ai1Pos
             |> collision
             |> momentum
             |> gravity
@@ -128,7 +131,7 @@ blockSize : Game -> ( Game, Cmd Msg )
 blockSize model =
     ( { model | blockSize = (toFloat (winWidth model.dimensions))/800.0}, Cmd.none)
 
-
+{-
 ai1Pos : ( Game, Cmd Msg ) -> ( Game, Cmd Msg )
 ai1Pos (model, cmd) =
       let
@@ -138,7 +141,7 @@ ai1Pos (model, cmd) =
               ({ model | ai1 = { pos = { x = 0, y = model.ai1.pos.y}}}, Cmd.none)
           else
               ({ model | ai1 = { pos = { x = model.ai1.pos.x + 10, y = model.ai1.pos.y}}}, Cmd.none)
-
+-}
 
 collision : ( Game , Cmd Msg ) -> ( Game, Cmd Msg )
 collision ( model, cmd ) =
@@ -158,8 +161,10 @@ updateDirection ( model , cmd )= ({ model | previousDirection = model.direction,
 momentum : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
 momentum ( model , cmd ) =
     let
+
         reset =         if model.previousDirection == model.direction then model.momentumSpeedCounter
                         else 0
+
         moreSpeed =     --if reset /= 0 then
                         if ((model.momentumSpeedCounter > -8) && (model.momentumSpeedCounter < 8)) then
                             if model.direction == Left then -1
@@ -169,17 +174,25 @@ momentum ( model , cmd ) =
 
         newCounter = reset + moreSpeed
         speed = speedConversion model
+
+
+        --speed = speedConversion model
+
     in
-        {--if model.direction == Up then
-            ({ model | position = { x = model.position.x, y = model.position.y} }, Cmd.none)
-        else if model.direction == Down then
-            ({ model | position = { x = model.position.x, y = model.position.y} }, Cmd.none)
-            --}
+
         if model.direction == Left then
             ({ model | position = { x = model.position.x - speed, y = model.position.y}, momentumSpeedCounter = newCounter}, Cmd.none)
         else if model.direction == Right then
             ({ model | position = { x = model.position.x + speed, y = model.position.y}, momentumSpeedCounter = newCounter}, Cmd.none)
         else ({ model | position = { x = model.position.x, y = model.position.y } }, Cmd.none)
+
+        {-
+        if model.direction == Left then
+            ({ model | position = { x = model.position.x - speed, y = model.position.y}, momentumSpeedCounter = 0 }, Cmd.none)
+        else if model.direction == Right then
+            ({ model | position = { x = model.position.x + speed, y = model.position.y}, momentumSpeedCounter = 0 }, Cmd.none)
+        else ({ model | position = { x = model.position.x, y = model.position.y } }, Cmd.none)
+        -}
 
 
 upMomentum : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
@@ -340,6 +353,7 @@ speedConversion model = case model.momentumSpeedCounter of
     6 -> 6
     7 -> 3
     _ -> 0
+
     {--
     if model.momentumSpeedCounter == -7 then 3
     else if model.momentumSpeedCounter == -6 then 6
