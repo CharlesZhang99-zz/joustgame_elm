@@ -31,7 +31,8 @@ type alias Game = {
         blockSize                   : Float,
         momentumSpeedCounter        : Int,
         directionMomentumCounter    : Int,
-        upMomentumCounter           : Int
+        upMomentumCounter           : Int,
+        keysDown                    : Set KeyCode
                    }
 
 type alias Coords = { x : Int, y : Int }
@@ -68,15 +69,18 @@ init = ({ dimensions = Window.Size 0 0,
             blockSize = 0,
             momentumSpeedCounter = 0,
             directionMomentumCounter = 0,
-            upMomentumCounter = 0})
+            upMomentumCounter = 0,
+            keysDown = Set.empty})
 
 update : Msg -> Game -> (Game,Cmd.Cmd Msg)
 update msg model = case msg of
         KeyDown keyCode ->
-            movePos keyCode model
+            (keyCode, model, Cmd.none)
+            |> insertKeys
+            |> movePos
 
         KeyUp keyCode ->
-            (model, Cmd.none )
+            ({ model | keysDown = Set.remove keyCode model.keysDown }, Cmd.none)
 
         SizeUpdated dimensions ->
             ({ model | dimensions = dimensions }, Cmd.none )
@@ -86,11 +90,14 @@ update msg model = case msg of
         Tick time ->
             updateGame model
 
+insertKeys : (Int, Game, Cmd Msg) -> (Int, Game, Cmd Msg)
+insertKeys (keyCode, model, cmd) =
+    (keyCode, { model | keysDown = Set.insert keyCode model.keysDown }, Cmd.none)
 
-movePos : Int -> Game -> (Game, Cmd.Cmd Msg)
-movePos keyCode model =
-    case keyCode of
-      87 -> ({ model | previousDirection = model.direction, upMomentumCounter = 12 }, Cmd.none)
+movePos : (Int, Game, Cmd Msg) -> (Game, Cmd Msg)
+movePos (keyCode, model, cmd) =
+    case (List.sum (Set.toList model.keysDown)) of
+      32 -> ({ model | previousDirection = model.direction, upMomentumCounter = 12 }, Cmd.none)
       --83 -> ({ model | previousDirection = model.direction, direction = Down }, Cmd.none)
       65 -> ({ model | previousDirection = model.direction, direction = Left, momentumSpeedCounter = -4 }, Cmd.none)
       68 -> ({ model | previousDirection = model.direction, direction = Right, momentumSpeedCounter = 4 }, Cmd.none)
