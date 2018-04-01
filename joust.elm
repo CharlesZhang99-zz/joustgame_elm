@@ -79,6 +79,7 @@ update msg model = case msg of
             |> insertKeys
             |> movePos
 
+
         KeyUp keyCode ->
             ({ model | keysDown = Set.remove keyCode model.keysDown }, Cmd.none)
 
@@ -97,13 +98,15 @@ insertKeys (keyCode, model, cmd) =
 movePos : (Int, Game, Cmd Msg) -> (Game, Cmd Msg)
 movePos (keyCode, model, cmd) =
     case (List.sum (Set.toList model.keysDown)) of
-      32 -> ({ model | previousDirection = model.direction, upMomentumCounter = 12 }, Cmd.none)
+      32 -> ( { model | previousDirection = model.direction, upMomentumCounter = 12 }, Cmd.none)
       --83 -> ({ model | previousDirection = model.direction, direction = Down }, Cmd.none)
-      65 -> ({ model | previousDirection = model.direction, direction = Left, momentumSpeedCounter = -4 }, Cmd.none)
-      68 -> ({ model | previousDirection = model.direction, direction = Right, momentumSpeedCounter = 4 }, Cmd.none)
+      65 -> ( { model | previousDirection = model.direction, direction = Left, momentumSpeedCounter = -4 }, Cmd.none)
+      68 -> ( { model | previousDirection = model.direction, direction = Right, momentumSpeedCounter = 4 }, Cmd.none)
+      97 -> ( { model | previousDirection = model.direction, direction = Left, momentumSpeedCounter = -4, upMomentumCounter = 12 }, Cmd.none)
+      100 -> ( { model | previousDirection = model.direction, direction = Right, momentumSpeedCounter = 4, upMomentumCounter = 12 }, Cmd.none)
       --65 -> ({ model | position = { x = model.position.x - 20, y = model.position.y}, previousDirection = model.direction, direction = Left }, Cmd.none)
       --68 -> ({ model | position = { x = model.position.x + 20, y = model.position.y}, previousDirection = model.direction, direction = Right }, Cmd.none)
-      _ -> (model, Cmd.none)
+      _ -> ( model, Cmd.none)
 
 updateGame : Game -> ( Game, Cmd Msg )
 updateGame model =
