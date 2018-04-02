@@ -11,6 +11,9 @@ import Keyboard exposing (..)
 import Time exposing (Time)
 import Window
 import Task
+import Html.Events exposing (onClick)
+import Html.Attributes as Attr
+
 
 
 {- Main -}
@@ -61,7 +64,8 @@ type Direction
     | NoDirection
 --KeyMsg Keyboard.KeyCode
 type Msg
-    = KeyDown KeyCode
+    = StartGame
+    | KeyDown KeyCode
     | KeyUp KeyCode
     | SizeUpdated Window.Size
     | Tick Time
@@ -73,7 +77,7 @@ init = ({ dimensions = Window.Size 0 0,
             ai2 = {pos = {x = 800, y = 250}, isDead = False, pic = 0, direction = Left},
             direction = NoDirection,
             previousDirection = NoDirection,
-            isDead = False,
+            isDead = True,
             blockSize = 0,
             momentumSpeedCounter = 0,
             directionMomentumCounter = 0,
@@ -84,6 +88,8 @@ init = ({ dimensions = Window.Size 0 0,
 
 update : Msg -> Game -> (Game,Cmd.Cmd Msg)
 update msg model = case msg of
+        StartGame ->
+            ({model | isDead = False, position = {x = 350, y = 120}}, Cmd.none)
         KeyDown keyCode ->
             (keyCode, model, Cmd.none)
             |> insertKeys
@@ -468,13 +474,11 @@ view model = let
               )
         else
             Html.div []
-            [text "Your score is: "
-            , text (toString(model.score))]
-            {-svg [width "0%",height "0%"]
-              (
-              [rect [x "posX",y "posY", width "50", height "50", fill "red"] []])
-              -}
-
+            [ Html.button [ onClick StartGame ] [ text "Click here to play" ]
+            , text "   Instructions: use keys A (left), D (Right), Space (Up) to land on top of enemies.   "
+            , text "Your score is: "
+            , text (toString(model.score))
+            ]
 
 renderBackground : Game -> Svg Msg
 renderBackground model =
@@ -489,6 +493,7 @@ subscriptions model =
         keysD = Keyboard.downs KeyDown
         keysU = Keyboard.ups KeyUp
         ticks = tick
+
     in
         Sub.batch [window, keysD, keysU, ticks]
 
