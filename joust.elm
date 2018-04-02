@@ -25,6 +25,7 @@ type alias Game = {
         dimensions                  : Window.Size,
         position                    : Coords,
         ai1                         : Ai,
+        ai2                         : Ai,
         direction                   : Direction,
         previousDirection           : Direction,
         isDead                      : Bool,
@@ -33,15 +34,19 @@ type alias Game = {
         directionMomentumCounter    : Int,
         upMomentumCounter           : Int,
         keysDown                    : Set KeyCode,
-        keySum                      : Int
+        keySum                      : Int,
+        score                       : Int
                    }
 
 type alias Coords = { x : Int, y : Int }
 
 type alias Ai = {
         pos : Coords,
-        isDead : Bool
+        isDead : Bool,
+        pic : Int,
+        direction : Direction
                   }
+
 type alias Platform = {
         leftPos   : Int,
         rightPos  : Int,
@@ -63,8 +68,9 @@ type Msg
     | Nothing
 
 init = ({ dimensions = Window.Size 0 0,
-            position = {x = 100, y = 100},
-            ai1 = {pos = {x = 0, y = 0}, isDead = False},
+            position = {x = 350, y = 120},
+            ai1 = {pos = {x = 0, y = 50}, isDead = False, pic = 0, direction = Right},
+            ai2 = {pos = {x = 800, y = 250}, isDead = False, pic = 0, direction = Left},
             direction = NoDirection,
             previousDirection = NoDirection,
             isDead = False,
@@ -73,7 +79,8 @@ init = ({ dimensions = Window.Size 0 0,
             directionMomentumCounter = 0,
             upMomentumCounter = 0,
             keysDown = Set.empty,
-            keySum = 0})
+            keySum = 0,
+            score = 0})
 
 update : Msg -> Game -> (Game,Cmd.Cmd Msg)
 update msg model = case msg of
@@ -81,7 +88,6 @@ update msg model = case msg of
             (keyCode, model, Cmd.none)
             |> insertKeys
             |> movePos
-
 
         KeyUp keyCode ->
             ({ model | keysDown = Set.remove keyCode model.keysDown }, Cmd.none)
@@ -115,8 +121,10 @@ updateGame : Game -> ( Game, Cmd Msg )
 updateGame model =
         ( model )
             |> blockSize
-            --|> ai1Pos
-            |> collision
+            |> ai1Pos
+            |> ai2Pos
+            |> ai1collision
+            |> ai2collision
             |> momentum
             |> gravity
             |> upMomentum
@@ -126,6 +134,8 @@ updateGame model =
             |> middlePlatform
             |> rightPlatform
             |> outOfScreen
+            |> pic
+            |> pic2
 
 blockSize : Game -> ( Game, Cmd Msg )
 blockSize model =
@@ -143,16 +153,53 @@ ai1Pos (model, cmd) =
               ({ model | ai1 = { pos = { x = model.ai1.pos.x + 10, y = model.ai1.pos.y}}}, Cmd.none)
 -}
 
-collision : ( Game , Cmd Msg ) -> ( Game, Cmd Msg )
-collision ( model, cmd ) =
-      --({ model | isDead = False }, Cmd.none)
---      let
+ai1Pos : ( Game, Cmd Msg ) -> ( Game, Cmd Msg )
+ai1Pos (model, cmd) =
+    if model.ai1.pos.x > 800 then
+        ({ model | ai1 = { pos = { x = -100, y = model.ai1.pos.y}, isDead = model.ai1.isDead, pic = model.ai1.pic, direction = model.ai1.direction}}, Cmd.none)
+    else
+        ({ model | ai1 = { pos = { x = model.ai1.pos.x + 5, y = model.ai1.pos.y}, isDead = model.ai1.isDead, pic = model.ai1.pic, direction = model.ai1.direction}}, Cmd.none)
 
-      if ((model.position.y - model.ai1.pos.y) < 50) then
-              ({ model | isDead = False }, cmd)
-      else
-              ({ model | isDead = False }, cmd)
---      in
+ai2Pos : ( Game, Cmd Msg ) -> ( Game, Cmd Msg )
+ai2Pos (model, cmd) =
+    if model.ai2.pos.x < -70 then
+        ({ model | ai2 = { pos = { x = 900, y = model.ai2.pos.y}, isDead = model.ai2.isDead, pic = model.ai2.pic, direction = model.ai2.direction}}, Cmd.none)
+    else
+        ({ model | ai2 = { pos = { x = model.ai2.pos.x - 5, y = model.ai2.pos.y}, isDead = model.ai2.isDead, pic = model.ai2.pic, direction = model.ai2.direction}}, Cmd.none)
+
+ai1collision : ( Game , Cmd Msg ) -> ( Game, Cmd Msg )
+ai1collision ( model, cmd ) =
+    let
+        aix = model.ai1.pos.x
+        aiy = model.ai1.pos.y
+        px = model.position.x
+        py = model.position.y
+
+    in
+        if (abs(aix - px) <= 40) then
+            if ((py - aiy) < -30) && ((py - aiy) > -50) then
+                ({ model | score = model.score + 1, ai1 = { pos = { x = -400, y = model.ai1.pos.y}, isDead = model.ai1.isDead, pic = model.ai1.pic, direction = model.ai1.direction}}, Cmd.none)
+            else if ((py - aiy) < 50) && ((py - aiy) > -30) then
+                ({ model | isDead = True}, Cmd.none)
+            else (model , Cmd.none)
+        else (model , Cmd.none)
+
+ai2collision : ( Game , Cmd Msg ) -> ( Game, Cmd Msg )
+ai2collision ( model, cmd ) =
+    let
+        aix = model.ai2.pos.x
+        aiy = model.ai2.pos.y
+        px = model.position.x
+        py = model.position.y
+
+    in
+        if (abs(aix - px) <= 40) then
+            if ((py - aiy) < -30) && ((py - aiy) > -50) then
+                ({ model | score = model.score + 1, ai2 = { pos = { x = 1200, y = model.ai2.pos.y}, isDead = model.ai2.isDead, pic = model.ai2.pic, direction = model.ai2.direction}}, Cmd.none)
+            else if ((py - aiy) < 50) && ((py - aiy) > -30) then
+                ({ model | isDead = True}, Cmd.none)
+            else (model , Cmd.none)
+        else (model , Cmd.none)
 
 updateDirection : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
 updateDirection ( model , cmd )= ({ model | previousDirection = model.direction, direction = model.direction }, Cmd.none)
@@ -219,14 +266,7 @@ upSpeedConversion speed =
     else if speed == 9 then 9
     else 0
 -}
-{--
-gravity : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
-gravity ( model, cmd ) =
-    if model.gravity == 0 then
-        ({ model | position = { x = model.position.x, y = model.position.y + 10} }, Cmd.none)
-    else if model.gravity == 1 then
-        ({ model | position = { x = model.position.x, y = model.position.y + 20} }, Cmd.none)
-    -}
+
 gravity : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
 gravity ( model, cmd ) =
     ({ model | position = { x = model.position.x, y = model.position.y + 4} }, Cmd.none)
@@ -243,18 +283,7 @@ basePlatform ( model, cmd ) =
             && (model.position.x > leftPos) && (model.position.x < rightPos)
             then ({ model | position = { x = model.position.x, y = upPos} }, Cmd.none)
         else ({ model | position = { x = model.position.x, y = model.position.y} }, Cmd.none)
-        {--
-basePlatform : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
-basePlatform ( model , cmd) =
-    --&& ((model.position.x >  (round ((39.0 * 400)/118))) && model.position.x < (round (((400.0-48) * 400)/118)))
-    --(model.position.x > (round ((39.0 * 800)/236))) &&
-    if (model.position.y > (400 - 50 - (round ((21.0 * 400)/118)))) && (model.position.y < (400 - 50 - (round ((15.0 * 400)/118))))
-        && (model.position.x + 25 > (round ((39.0 * 800)/236))) && (model.position.x + 25 < (round (800.0 - ((48.0 * 800))/236)))
-        --&& (model.position.y < round ((450*400)/118))
-        then ({ model | position = { x = model.position.x, y = 400 - 50 - (round ((21.0 * 400)/118))} }, Cmd.none)
-    else ({ model | position = { x = model.position.x, y = model.position.y} }, Cmd.none)
 
--}
 leftPlatform : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
 leftPlatform ( model , cmd ) =
     let
@@ -267,11 +296,6 @@ leftPlatform ( model , cmd ) =
             && (model.position.x > leftPos) && (model.position.x < rightPos)
             then ({ model | position = { x = model.position.x, y = upPos} }, Cmd.none)
         else ({ model | position = { x = model.position.x, y = model.position.y} }, Cmd.none)
-    {--
-    if (model.position.x + 25 > 0) && ((model.position.x + 25) < (round ((49.0 * 800)/236)))
-        then ({ model | position = { x = model.position.x, y = (round (((24.0 - 8) * 400)/118))} }, Cmd.none)
-    else ({ model | position = { x = model.position.x, y = model.position.y} }, Cmd.none)
--}
 
 middlePlatform : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
 middlePlatform ( model , cmd ) =
@@ -309,7 +333,21 @@ outOfScreen ( model , cmd) =
         --    ({ model | position = { x = model.position.x, y = 400 - 50 - (round ((21.0 * 400)/118))} }, Cmd.none)
         else if model.position.y < 0 then
             ({ model | position = { x = model.position.x, y = 0} }, Cmd.none)
+        else if model.position.y > 320 then
+            ({ model | isDead = True }, Cmd.none)
         else ({ model | position = { x = model.position.x, y = model.position.y } }, Cmd.none)
+
+pic : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
+pic (model, cmd) =
+    if model.ai1.pic > 5 then
+        ({ model | ai1 = {pos = model.ai1.pos, isDead = model.ai1.isDead, pic = 0, direction = model.ai1.direction}}, Cmd.none)
+    else ({ model | ai1 = {pos = model.ai1.pos, isDead = model.ai1.isDead, pic = model.ai1.pic + 1, direction = model.ai1.direction}}, Cmd.none)
+
+pic2 : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
+pic2 (model, cmd) =
+    if model.ai2.pic > 5 then
+        ({ model | ai2 = {pos = model.ai2.pos, isDead = model.ai2.isDead, pic = 0, direction = model.ai2.direction}}, Cmd.none)
+    else ({ model | ai2 = {pos = model.ai2.pos, isDead = model.ai2.isDead, pic = model.ai2.pic + 1, direction = model.ai2.direction}}, Cmd.none)
 
 backgroundColor : Attribute Msg
 backgroundColor =
@@ -354,31 +392,59 @@ speedConversion model = case model.momentumSpeedCounter of
     7 -> 3
     _ -> 0
 
-    {--
-    if model.momentumSpeedCounter == -7 then 3
-    else if model.momentumSpeedCounter == -6 then 6
-    else if model.momentumSpeedCounter == -5 then 9
-    else if model.momentumSpeedCounter == -4 then 9
-    else if model.momentumSpeedCounter == -3 then 9
-    else if model.momentumSpeedCounter == -2 then 6
-    else if model.momentumSpeedCounter == -1 then 3
-    else if model.momentumSpeedCounter == 0 then 0
-    else if model.momentumSpeedCounter == 1 then 3
-    else if model.momentumSpeedCounter == 2 then 6
-    else if model.momentumSpeedCounter == 3 then 9
-    else if model.momentumSpeedCounter == 4 then 9
-    else if model.momentumSpeedCounter == 5 then 9
-    else if model.momentumSpeedCounter == 6 then 6
-    else if model.momentumSpeedCounter == 7 then 3
-    else 0
-    -}
-
 view : Game -> Html.Html Msg
 view model = let
         posX = toString (toFloat model.position.x * model.blockSize)
         posY = toString (toFloat model.position.y * model.blockSize)
         ai1X = toString (toFloat model.ai1.pos.x * model.blockSize)
         ai1Y = toString (toFloat model.ai1.pos.y * model.blockSize)
+        ai2X = toString (toFloat model.ai2.pos.x * model.blockSize)
+        ai2Y = toString (toFloat model.ai2.pos.y * model.blockSize)
+        r1 = "./src/images/r1.png"
+        r2 = "./src/images/r2.png"
+        r3 = "./src/images/r3.png"
+        r4 = "./src/images/r4.png"
+        l1 = "./src/images/l1.png"
+        l2 = "./src/images/l2.png"
+        l3 = "./src/images/l3.png"
+        l4 = "./src/images/l4.png"
+        ai1Image =  if model.ai1.direction == Right then
+                        case model.ai1.pic of
+                            0 -> r1
+                            1 -> r1
+                            2 -> r2
+                            3 -> r2
+                            4 -> r3
+                            5 -> r3
+                            _ -> r4
+                    else
+                        case model.ai1.pic of
+                            0 -> l1
+                            1 -> l1
+                            2 -> l2
+                            3 -> l2
+                            4 -> l3
+                            5 -> l3
+                            _ -> l4
+
+        ai2Image =  if model.ai2.direction == Right then
+                        case model.ai1.pic of
+                            0 -> r1
+                            1 -> r1
+                            2 -> r2
+                            3 -> r2
+                            4 -> r3
+                            5 -> r3
+                            _ -> r4
+                    else
+                        case model.ai1.pic of
+                            0 -> l1
+                            1 -> l1
+                            2 -> l2
+                            3 -> l2
+                            4 -> l3
+                            5 -> l3
+                            _ -> l4
         ( scaledWidth, scaledHeight ) = scale model.dimensions
         bs = model.blockSize
         pimage = if model.direction == Right then
@@ -387,6 +453,7 @@ view model = let
                 else
                     if model.upMomentumCounter > 9 then "./src/images/pf1.1.png"
                     else "./src/images/pf2.1.png"
+
     --parentStyle =
     --      Html.Attributes.style [ ( "margin", "0 auto" ), ( "display", "block" ) ]
 
@@ -395,56 +462,24 @@ view model = let
             svg [width "100%",height "100%"]
               --([ renderBackground model ]
               ([image [x "0", y "0", width (toString(800*bs)), height (toString(400*bs)), Svg.Attributes.xlinkHref "./src/images/background.png"][]]
+              ++ [image [x ai1X, y ai1Y, width (toString(70*bs)), height (toString(40*bs)), Svg.Attributes.xlinkHref ai1Image][]]
+              ++ [image [x ai2X, y ai2Y, width (toString(70*bs)), height (toString(40*bs)), Svg.Attributes.xlinkHref ai2Image][]]
               ++ [image [x posX, y posY, width (toString(50*bs)), height (toString(50*bs)), Svg.Attributes.xlinkHref pimage][]]
-              --++ [rect [x ai1X,y ai1Y, width "50", height "50", fill "blue"] []]
               )
         else
-            svg [width "0%",height "0%"]
+            Html.div []
+            [text "Your score is: "
+            , text (toString(model.score))]
+            {-svg [width "0%",height "0%"]
               (
               [rect [x "posX",y "posY", width "50", height "50", fill "red"] []])
-
-{--
-view : Game -> Html.Html Msg
-view model = let
-      posX = toFloat model.position.x * model.blockSize
-      posY = toFloat model.position.y * model.blockSize
-      ai1X = toFloat model.ai1.pos.x * model.blockSize
-      ai1Y = toFloat model.ai1.pos.y * model.blockSize
-      bs = model.blockSize
-      ( scaledWidth, scaledHeight ) =
-          scale model.dimensions
-
-      --parentStyle =
-    --      Html.Attributes.style [ ( "margin", "0 auto" ), ( "display", "block" ) ]
-    in
-        if model.isDead == False then
-            svg [width "100%",height "100%"]
-              ([ renderBackground model ]
-              ++ [rect [x (toString ((posX + 4)*bs)),y (toString ((posY - 15)*bs)), width (toString(13.0*bs)), height (toString(18.0*bs)), fill "#BEBC3C"] []]
-              ++ [rect [x (toString (posX*bs)),y (toString (posY*bs)), width (toString(30.0*bs)), height (toString(30.0*bs)), fill "#70CCDB"] []]
-              ++ [rect [x (toString ((posX - 12)*bs)),y (toString ((posY + 12)*bs)), width (toString(15.0*bs)), height (toString(15.0*bs)), fill "#70CCDB"] []]
-              ++ [rect [x (toString ((posX + 15)*bs)),y (toString ((posY - 4)*bs)), width (toString(15.0*bs)), height (toString(15.0*bs)), fill "#70CCDB"] []]
-              ++ [rect [x (toString ((posX + 2)*bs)),y (toString ((posY + 10)*bs)), width (toString(13.0*bs)), height (toString(13.0*bs)), fill "#924E1B"] []]
-              ++ [rect [x (toString ((posX + 12)*bs)),y (toString ((posY + 16)*bs)), width (toString(15.0*bs)), height (toString(15.0*bs)), fill "#924E1B"] []]
-              --++ [rect [x (toString ((posX + 25)*bs)),y (toString ((posY + 38)*bs)), width "25", height "25", fill "#924E1B"] []]
-              ++ [rect [x (toString ((posX + 21)*bs)),y (toString ((posY + 25)*bs)), width (toString(13.0*bs)), height (toString(13.0*bs)), fill "#924E1B"] []]
+              -}
 
 
-              --++ [rect [x ai1X,y ai1Y, width "50", height "50", fill "blue"] []]
-              )
-        else
-            svg [width "0%",height "0%"]
-              (
-              [rect [x "posX",y "posY", width "50", height "50", fill "red"] []])
--}
 renderBackground : Game -> Svg Msg
 renderBackground model =
     rect [ x "0", y "0", width "100%", height "100%", backgroundColor ] []
-{--
-subscriptions : Game -> Sub Msg
-subscriptions model =
-    Sub.batch [windowDimensionsChanged, Key.downs KeyMsg, tick]
--}
+
 
 subscriptions : Game -> Sub Msg
 subscriptions model =
@@ -456,77 +491,7 @@ subscriptions model =
         ticks = tick
     in
         Sub.batch [window, keysD, keysU, ticks]
-{-
-subscriptions : Model -> Sub Msg
-subscriptions {ui} =
-  let
-      window = Window.resizes (\{width,height} -> ResizeWindow (width,height))
-      keys = [ Keyboard.downs (KeyChange True)
-             , Keyboard.ups (KeyChange False)
-             ]
-      animation = [ AnimationFrame.diffs Tick ]
-      seconds = Time.every Time.second TimeSecond
-  in
-     (
-     case ui.screen of
-       StartScreen ->
-         [ window, seconds ]
 
-       PlayScreen ->
-         [ window ] ++ keys ++ animation
-
-       GameoverScreen ->
-         [ window ] ++ keys
-
-     ) |> Sub.batch
-
-update : Msg -> Model -> (Model, Cmd Msg)
-update action ({ui,scene} as model) =
-  case action of
-    ResizeWindow dimensions ->
-      ({ model | ui = { ui | windowSize = dimensions } }, Cmd.none)
-
-    Tick delta ->
-      let
-          player1 = scene.player1 |> steerAndGravity delta ui
-          player2 = scene.player2 |> steerAndGravity delta ui
-          round = scene.round
-          (player1_, player2_) = handleCollisions player1 player2
-          player1__ = player1_ |> movePlayer delta
-          player2__ = player2_ |> movePlayer delta
-          hasAnyPlayerFallen = hasFallen player1 || hasFallen player2
-          isRoundOver = hasAnyPlayerFallen && round.touchdownTime > 1400
-          (player1___, player2___) = applyScores player1__ player2__ isRoundOver
-          isGameOver = player1___.score>=winScore || player2___.score>=winScore
-          (round_, screen_) =
-            if isGameOver then
-               (round, GameoverScreen)
-            else if isRoundOver then
-               (newRound, PlayScreen)
-            else if hasAnyPlayerFallen then
-              ({ round | touchdownTime = round.touchdownTime + delta }, PlayScreen)
-            else
-              (round, PlayScreen)
-          scene_ = { scene | player1 = player1___
-                           , player2 = player2___
-                           , round = round_ }
-          ui_ = { ui | screen = screen_ }
-      in
-          ({ model | scene = scene_, ui = ui_ }, Cmd.none)
-
-    KeyChange pressed keycode ->
-      (handleKeyChange pressed keycode model, Cmd.none)
-
-    StartGame ->
-      (freshGame ui, Cmd.none)
-
-    TimeSecond _ ->
-      ({ model | secondsPassed = model.secondsPassed+1 }, Cmd.none)
-
-    NoOp ->
-      (model, Cmd.none)
-
--}
 initCmds : Cmd Msg
 initCmds =
     Task.perform SizeUpdated Window.size
