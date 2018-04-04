@@ -71,7 +71,7 @@ type Msg
     | Tick Time
     | Nothing
 
-init = ({ dimensions = Window.Size 0 0,
+init = ({ dimensions = Window.Size 1920 1080,
             position = {x = 350, y = 120},
             ai1 = {pos = {x = 0, y = 50}, isDead = False, pic = 0, direction = Right},
             ai2 = {pos = {x = 800, y = 250}, isDead = False, pic = 0, direction = Left},
@@ -465,7 +465,7 @@ view model = let
 
     in
         if model.isDead == False then
-            svg [width "100%",height "100%"]
+            svg [width "1500",height "700"]
               --([ renderBackground model ]
               ([image [x "0", y "0", width (toString(800*bs)), height (toString(400*bs)), Svg.Attributes.xlinkHref "./src/images/background.png"][]]
               ++ [image [x ai1X, y ai1Y, width (toString(70*bs)), height (toString(40*bs)), Svg.Attributes.xlinkHref ai1Image][]]
