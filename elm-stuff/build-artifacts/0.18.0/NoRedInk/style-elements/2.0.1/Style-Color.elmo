@@ -1,0 +1,42 @@
+var _NoRedInk$style_elements$Style_Color$placeholder = function (clr) {
+	return A2(
+		_NoRedInk$style_elements$Style_Internal_Model$PseudoElement,
+		'::placeholder',
+		{
+			ctor: '::',
+			_0: _NoRedInk$style_elements$Style_Internal_Model$TextColor(clr),
+			_1: {
+				ctor: '::',
+				_0: A2(_NoRedInk$style_elements$Style_Internal_Model$Exact, 'opacity', '1'),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _NoRedInk$style_elements$Style_Color$selection = function (clr) {
+	return _NoRedInk$style_elements$Style_Internal_Model$SelectionColor(clr);
+};
+var _NoRedInk$style_elements$Style_Color$decoration = function (clr) {
+	return A2(
+		_NoRedInk$style_elements$Style_Internal_Model$Exact,
+		'text-decoration-color',
+		_NoRedInk$style_elements$Style_Internal_Render_Value$color(clr));
+};
+var _NoRedInk$style_elements$Style_Color$cursor = function (clr) {
+	return A2(
+		_NoRedInk$style_elements$Style_Internal_Model$Exact,
+		'cursor-color',
+		_NoRedInk$style_elements$Style_Internal_Render_Value$color(clr));
+};
+var _NoRedInk$style_elements$Style_Color$border = function (clr) {
+	return A2(
+		_NoRedInk$style_elements$Style_Internal_Model$Exact,
+		'border-color',
+		_NoRedInk$style_elements$Style_Internal_Render_Value$color(clr));
+};
+var _NoRedInk$style_elements$Style_Color$background = function (clr) {
+	return A2(
+		_NoRedInk$style_elements$Style_Internal_Model$Exact,
+		'background-color',
+		_NoRedInk$style_elements$Style_Internal_Render_Value$color(clr));
+};
+var _NoRedInk$style_elements$Style_Color$text = _NoRedInk$style_elements$Style_Internal_Model$TextColor;

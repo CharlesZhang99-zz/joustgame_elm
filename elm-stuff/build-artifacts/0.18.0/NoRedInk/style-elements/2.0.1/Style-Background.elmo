@@ -1,0 +1,68 @@
+var _NoRedInk$style_elements$Style_Background$noRepeat = _NoRedInk$style_elements$Style_Internal_Model$NoRepeat;
+var _NoRedInk$style_elements$Style_Background$round = _NoRedInk$style_elements$Style_Internal_Model$Round;
+var _NoRedInk$style_elements$Style_Background$space = _NoRedInk$style_elements$Style_Internal_Model$Space;
+var _NoRedInk$style_elements$Style_Background$repeat = _NoRedInk$style_elements$Style_Internal_Model$Repeat;
+var _NoRedInk$style_elements$Style_Background$repeatY = _NoRedInk$style_elements$Style_Internal_Model$RepeatY;
+var _NoRedInk$style_elements$Style_Background$repeatX = _NoRedInk$style_elements$Style_Internal_Model$RepeatX;
+var _NoRedInk$style_elements$Style_Background$imageWith = function (attrs) {
+	return _NoRedInk$style_elements$Style_Internal_Model$Background(
+		_NoRedInk$style_elements$Style_Internal_Model$BackgroundImage(attrs));
+};
+var _NoRedInk$style_elements$Style_Background$image = function (src) {
+	return _NoRedInk$style_elements$Style_Internal_Model$Background(
+		_NoRedInk$style_elements$Style_Internal_Model$BackgroundImage(
+			{
+				src: src,
+				position: {ctor: '_Tuple2', _0: 0, _1: 0},
+				repeat: _NoRedInk$style_elements$Style_Background$noRepeat
+			}));
+};
+var _NoRedInk$style_elements$Style_Background$gradientBottomLeft = function (steps) {
+	return _NoRedInk$style_elements$Style_Internal_Model$Background(
+		A2(_NoRedInk$style_elements$Style_Internal_Model$BackgroundLinearGradient, _NoRedInk$style_elements$Style_Internal_Model$ToBottomLeft, steps));
+};
+var _NoRedInk$style_elements$Style_Background$gradientTopLeft = function (steps) {
+	return _NoRedInk$style_elements$Style_Internal_Model$Background(
+		A2(_NoRedInk$style_elements$Style_Internal_Model$BackgroundLinearGradient, _NoRedInk$style_elements$Style_Internal_Model$ToTopLeft, steps));
+};
+var _NoRedInk$style_elements$Style_Background$gradientLeft = function (steps) {
+	return _NoRedInk$style_elements$Style_Internal_Model$Background(
+		A2(_NoRedInk$style_elements$Style_Internal_Model$BackgroundLinearGradient, _NoRedInk$style_elements$Style_Internal_Model$ToLeft, steps));
+};
+var _NoRedInk$style_elements$Style_Background$gradientBottomRight = function (steps) {
+	return _NoRedInk$style_elements$Style_Internal_Model$Background(
+		A2(_NoRedInk$style_elements$Style_Internal_Model$BackgroundLinearGradient, _NoRedInk$style_elements$Style_Internal_Model$ToBottomRight, steps));
+};
+var _NoRedInk$style_elements$Style_Background$gradientTopRight = function (steps) {
+	return _NoRedInk$style_elements$Style_Internal_Model$Background(
+		A2(_NoRedInk$style_elements$Style_Internal_Model$BackgroundLinearGradient, _NoRedInk$style_elements$Style_Internal_Model$ToTopRight, steps));
+};
+var _NoRedInk$style_elements$Style_Background$gradientRight = function (steps) {
+	return _NoRedInk$style_elements$Style_Internal_Model$Background(
+		A2(_NoRedInk$style_elements$Style_Internal_Model$BackgroundLinearGradient, _NoRedInk$style_elements$Style_Internal_Model$ToRight, steps));
+};
+var _NoRedInk$style_elements$Style_Background$gradientDown = function (steps) {
+	return _NoRedInk$style_elements$Style_Internal_Model$Background(
+		A2(_NoRedInk$style_elements$Style_Internal_Model$BackgroundLinearGradient, _NoRedInk$style_elements$Style_Internal_Model$ToDown, steps));
+};
+var _NoRedInk$style_elements$Style_Background$gradientUp = function (steps) {
+	return _NoRedInk$style_elements$Style_Internal_Model$Background(
+		A2(_NoRedInk$style_elements$Style_Internal_Model$BackgroundLinearGradient, _NoRedInk$style_elements$Style_Internal_Model$ToUp, steps));
+};
+var _NoRedInk$style_elements$Style_Background$gradient = F2(
+	function (angle, steps) {
+		return _NoRedInk$style_elements$Style_Internal_Model$Background(
+			A2(
+				_NoRedInk$style_elements$Style_Internal_Model$BackgroundLinearGradient,
+				_NoRedInk$style_elements$Style_Internal_Model$ToAngle(angle),
+				steps));
+	});
+var _NoRedInk$style_elements$Style_Background$px = F2(
+	function (p, c) {
+		return A2(_NoRedInk$style_elements$Style_Internal_Model$PxStep, c, p);
+	});
+var _NoRedInk$style_elements$Style_Background$percent = F2(
+	function (p, c) {
+		return A2(_NoRedInk$style_elements$Style_Internal_Model$PercentStep, c, p);
+	});
+var _NoRedInk$style_elements$Style_Background$step = _NoRedInk$style_elements$Style_Internal_Model$ColorStep;

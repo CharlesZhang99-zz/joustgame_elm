@@ -1,0 +1,1000 @@
+var _user$project$SvgAnimation$speedConversion = function (model) {
+	var _p0 = model.momentumSpeedCounter;
+	switch (_p0) {
+		case -7:
+			return 3;
+		case -6:
+			return 6;
+		case -5:
+			return 9;
+		case -4:
+			return 9;
+		case -3:
+			return 9;
+		case -2:
+			return 6;
+		case -1:
+			return 3;
+		case 0:
+			return 0;
+		case 1:
+			return 3;
+		case 2:
+			return 6;
+		case 3:
+			return 9;
+		case 4:
+			return 9;
+		case 5:
+			return 9;
+		case 6:
+			return 6;
+		case 7:
+			return 3;
+		default:
+			return 0;
+	}
+};
+var _user$project$SvgAnimation$winWidth = function (size) {
+	return size.width;
+};
+var _user$project$SvgAnimation$scale = function (size) {
+	var _p1 = {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Basics$toFloat(size.width),
+		_1: _elm_lang$core$Basics$toFloat(size.height)
+	};
+	var fWidth = _p1._0;
+	var fHeight = _p1._1;
+	var _p2 = (_elm_lang$core$Native_Utils.cmp(fWidth, fHeight) > 0) ? {ctor: '_Tuple2', _0: fHeight / fWidth, _1: 1.0} : {ctor: '_Tuple2', _0: 1.0, _1: fWidth / fHeight};
+	var scaledX = _p2._0;
+	var scaledY = _p2._1;
+	var toPixelStr = function (i) {
+		return _elm_lang$core$Basics$toString(
+			_elm_lang$core$Basics$round(i));
+	};
+	return {
+		ctor: '_Tuple2',
+		_0: toPixelStr(fWidth * scaledX),
+		_1: toPixelStr(fHeight * scaledY)
+	};
+};
+var _user$project$SvgAnimation$backgroundColor = _elm_lang$svg$Svg_Attributes$fill('Black');
+var _user$project$SvgAnimation$renderBackground = function (model) {
+	return A2(
+		_elm_lang$svg$Svg$rect,
+		{
+			ctor: '::',
+			_0: _elm_lang$svg$Svg_Attributes$x('0'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$y('0'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$width('100%'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$height('100%'),
+						_1: {
+							ctor: '::',
+							_0: _user$project$SvgAnimation$backgroundColor,
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		},
+		{ctor: '[]'});
+};
+var _user$project$SvgAnimation$pic2 = function (_p3) {
+	var _p4 = _p3;
+	var _p5 = _p4._0;
+	return (_elm_lang$core$Native_Utils.cmp(_p5.ai2.pic, 5) > 0) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p5,
+			{
+				ai2: {pos: _p5.ai2.pos, isDead: _p5.ai2.isDead, pic: 0, direction: _p5.ai2.direction}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p5,
+			{
+				ai2: {pos: _p5.ai2.pos, isDead: _p5.ai2.isDead, pic: _p5.ai2.pic + 1, direction: _p5.ai2.direction}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+};
+var _user$project$SvgAnimation$pic = function (_p6) {
+	var _p7 = _p6;
+	var _p8 = _p7._0;
+	return (_elm_lang$core$Native_Utils.cmp(_p8.ai1.pic, 5) > 0) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p8,
+			{
+				ai1: {pos: _p8.ai1.pos, isDead: _p8.ai1.isDead, pic: 0, direction: _p8.ai1.direction}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p8,
+			{
+				ai1: {pos: _p8.ai1.pos, isDead: _p8.ai1.isDead, pic: _p8.ai1.pic + 1, direction: _p8.ai1.direction}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+};
+var _user$project$SvgAnimation$outOfScreen = function (_p9) {
+	var _p10 = _p9;
+	var _p11 = _p10._0;
+	return (_elm_lang$core$Native_Utils.cmp(_p11.position.x, 800) > 0) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p11,
+			{
+				position: {x: 0, y: _p11.position.y}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : ((_elm_lang$core$Native_Utils.cmp(_p11.position.x, 0) < 0) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p11,
+			{
+				position: {x: 800, y: _p11.position.y}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : ((_elm_lang$core$Native_Utils.cmp(_p11.position.y, 0) < 0) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p11,
+			{
+				position: {x: _p11.position.x, y: 0}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : ((_elm_lang$core$Native_Utils.cmp(_p11.position.y, 320) > 0) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p11,
+			{isDead: true}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p11,
+			{
+				position: {x: _p11.position.x, y: _p11.position.y}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	})));
+};
+var _user$project$SvgAnimation$rightPlatform = function (_p12) {
+	var _p13 = _p12;
+	var _p14 = _p13._0;
+	var downPos = _elm_lang$core$Basics$round((33 * 400) / 118) - 50;
+	var upPos = _elm_lang$core$Basics$round((31 * 400) / 118) - 50;
+	var rightPos = _elm_lang$core$Basics$round((236 * 400) / 118) - 25;
+	var leftPos = _elm_lang$core$Basics$round(((236 - 35) * 400) / 118) - 25;
+	return ((_elm_lang$core$Native_Utils.cmp(_p14.position.y, upPos) > 0) && ((_elm_lang$core$Native_Utils.cmp(_p14.position.y, downPos) < 0) && ((_elm_lang$core$Native_Utils.cmp(_p14.position.x, leftPos) > 0) && (_elm_lang$core$Native_Utils.cmp(_p14.position.x, rightPos) < 0)))) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p14,
+			{
+				position: {x: _p14.position.x, y: upPos}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p14,
+			{
+				position: {x: _p14.position.x, y: _p14.position.y}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+};
+var _user$project$SvgAnimation$middlePlatform = function (_p15) {
+	var _p16 = _p15;
+	var _p17 = _p16._0;
+	var downPos = _elm_lang$core$Basics$round((56 * 400) / 118) - 50;
+	var upPos = _elm_lang$core$Basics$round((54 * 400) / 118) - 50;
+	var rightPos = _elm_lang$core$Basics$round((132 * 400) / 118) - 25;
+	var leftPos = _elm_lang$core$Basics$round((81 * 400) / 118) - 25;
+	return ((_elm_lang$core$Native_Utils.cmp(_p17.position.y, upPos) > 0) && ((_elm_lang$core$Native_Utils.cmp(_p17.position.y, downPos) < 0) && ((_elm_lang$core$Native_Utils.cmp(_p17.position.x, leftPos) > 0) && (_elm_lang$core$Native_Utils.cmp(_p17.position.x, rightPos) < 0)))) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p17,
+			{
+				position: {x: _p17.position.x, y: upPos}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p17,
+			{
+				position: {x: _p17.position.x, y: _p17.position.y}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+};
+var _user$project$SvgAnimation$leftPlatform = function (_p18) {
+	var _p19 = _p18;
+	var _p20 = _p19._0;
+	var downPos = _elm_lang$core$Basics$round((33 * 400) / 118) - 50;
+	var upPos = _elm_lang$core$Basics$round((31 * 400) / 118) - 50;
+	var rightPos = _elm_lang$core$Basics$round((49 * 400) / 118) - 25;
+	var leftPos = 0 - 25;
+	return ((_elm_lang$core$Native_Utils.cmp(_p20.position.y, upPos) > 0) && ((_elm_lang$core$Native_Utils.cmp(_p20.position.y, downPos) < 0) && ((_elm_lang$core$Native_Utils.cmp(_p20.position.x, leftPos) > 0) && (_elm_lang$core$Native_Utils.cmp(_p20.position.x, rightPos) < 0)))) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p20,
+			{
+				position: {x: _p20.position.x, y: upPos}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p20,
+			{
+				position: {x: _p20.position.x, y: _p20.position.y}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+};
+var _user$project$SvgAnimation$basePlatform = function (_p21) {
+	var _p22 = _p21;
+	var _p23 = _p22._0;
+	var downPos = (400 - 50) - _elm_lang$core$Basics$round((15.0 * 400) / 118);
+	var upPos = (400 - 50) - _elm_lang$core$Basics$round((21.0 * 400) / 118);
+	var rightPos = _elm_lang$core$Basics$round(800.0 - ((48.0 * 800) / 236)) - 25;
+	var leftPos = _elm_lang$core$Basics$round((39.0 * 800) / 236) - 25;
+	return ((_elm_lang$core$Native_Utils.cmp(_p23.position.y, upPos) > 0) && ((_elm_lang$core$Native_Utils.cmp(_p23.position.y, downPos) < 0) && ((_elm_lang$core$Native_Utils.cmp(_p23.position.x, leftPos) > 0) && (_elm_lang$core$Native_Utils.cmp(_p23.position.x, rightPos) < 0)))) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p23,
+			{
+				position: {x: _p23.position.x, y: upPos}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p23,
+			{
+				position: {x: _p23.position.x, y: _p23.position.y}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+};
+var _user$project$SvgAnimation$gravity = function (_p24) {
+	var _p25 = _p24;
+	var _p26 = _p25._0;
+	return {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p26,
+			{
+				position: {x: _p26.position.x, y: _p26.position.y + 4}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+};
+var _user$project$SvgAnimation$upMomentum = function (_p27) {
+	var _p28 = _p27;
+	var _p29 = _p28._0;
+	var upCounter = (_elm_lang$core$Native_Utils.cmp(_p29.upMomentumCounter, 0) > 0) ? (_p29.upMomentumCounter - 1) : _p29.upMomentumCounter;
+	return {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p29,
+			{
+				position: {x: _p29.position.x, y: _p29.position.y - upCounter},
+				upMomentumCounter: upCounter
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+};
+var _user$project$SvgAnimation$updateDirection = function (_p30) {
+	var _p31 = _p30;
+	var _p32 = _p31._0;
+	return {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p32,
+			{previousDirection: _p32.direction, direction: _p32.direction}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+};
+var _user$project$SvgAnimation$ai2collision = function (_p33) {
+	var _p34 = _p33;
+	var _p35 = _p34._0;
+	var py = _p35.position.y;
+	var px = _p35.position.x;
+	var aiy = _p35.ai2.pos.y;
+	var aix = _p35.ai2.pos.x;
+	return (_elm_lang$core$Native_Utils.cmp(
+		_elm_lang$core$Basics$abs(aix - px),
+		40) < 1) ? (((_elm_lang$core$Native_Utils.cmp(py - aiy, -30) < 0) && (_elm_lang$core$Native_Utils.cmp(py - aiy, -50) > 0)) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p35,
+			{
+				score: _p35.score + 1,
+				ai2: {
+					pos: {x: 1200, y: _p35.ai2.pos.y},
+					isDead: _p35.ai2.isDead,
+					pic: _p35.ai2.pic,
+					direction: _p35.ai2.direction
+				}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : (((_elm_lang$core$Native_Utils.cmp(py - aiy, 50) < 0) && (_elm_lang$core$Native_Utils.cmp(py - aiy, -30) > 0)) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p35,
+			{isDead: true}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : {ctor: '_Tuple2', _0: _p35, _1: _elm_lang$core$Platform_Cmd$none})) : {ctor: '_Tuple2', _0: _p35, _1: _elm_lang$core$Platform_Cmd$none};
+};
+var _user$project$SvgAnimation$ai1collision = function (_p36) {
+	var _p37 = _p36;
+	var _p38 = _p37._0;
+	var py = _p38.position.y;
+	var px = _p38.position.x;
+	var aiy = _p38.ai1.pos.y;
+	var aix = _p38.ai1.pos.x;
+	return (_elm_lang$core$Native_Utils.cmp(
+		_elm_lang$core$Basics$abs(aix - px),
+		40) < 1) ? (((_elm_lang$core$Native_Utils.cmp(py - aiy, -30) < 0) && (_elm_lang$core$Native_Utils.cmp(py - aiy, -50) > 0)) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p38,
+			{
+				score: _p38.score + 1,
+				ai1: {
+					pos: {x: -400, y: _p38.ai1.pos.y},
+					isDead: _p38.ai1.isDead,
+					pic: _p38.ai1.pic,
+					direction: _p38.ai1.direction
+				}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : (((_elm_lang$core$Native_Utils.cmp(py - aiy, 50) < 0) && (_elm_lang$core$Native_Utils.cmp(py - aiy, -30) > 0)) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p38,
+			{isDead: true}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : {ctor: '_Tuple2', _0: _p38, _1: _elm_lang$core$Platform_Cmd$none})) : {ctor: '_Tuple2', _0: _p38, _1: _elm_lang$core$Platform_Cmd$none};
+};
+var _user$project$SvgAnimation$ai2Pos = function (_p39) {
+	var _p40 = _p39;
+	var _p41 = _p40._0;
+	return (_elm_lang$core$Native_Utils.cmp(_p41.ai2.pos.x, -70) < 0) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p41,
+			{
+				ai2: {
+					pos: {x: 900, y: _p41.ai2.pos.y},
+					isDead: _p41.ai2.isDead,
+					pic: _p41.ai2.pic,
+					direction: _p41.ai2.direction
+				}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p41,
+			{
+				ai2: {
+					pos: {x: _p41.ai2.pos.x - 5, y: _p41.ai2.pos.y},
+					isDead: _p41.ai2.isDead,
+					pic: _p41.ai2.pic,
+					direction: _p41.ai2.direction
+				}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+};
+var _user$project$SvgAnimation$ai1Pos = function (_p42) {
+	var _p43 = _p42;
+	var _p44 = _p43._0;
+	return (_elm_lang$core$Native_Utils.cmp(_p44.ai1.pos.x, 800) > 0) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p44,
+			{
+				ai1: {
+					pos: {x: -100, y: _p44.ai1.pos.y},
+					isDead: _p44.ai1.isDead,
+					pic: _p44.ai1.pic,
+					direction: _p44.ai1.direction
+				}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p44,
+			{
+				ai1: {
+					pos: {x: _p44.ai1.pos.x + 5, y: _p44.ai1.pos.y},
+					isDead: _p44.ai1.isDead,
+					pic: _p44.ai1.pic,
+					direction: _p44.ai1.direction
+				}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+};
+var _user$project$SvgAnimation$blockSize = function (model) {
+	return {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				blockSize: _elm_lang$core$Basics$toFloat(
+					_user$project$SvgAnimation$winWidth(model.dimensions)) / 800.0
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+};
+var _user$project$SvgAnimation$insertKeys = function (_p45) {
+	var _p46 = _p45;
+	var _p48 = _p46._1;
+	var _p47 = _p46._0;
+	return {
+		ctor: '_Tuple3',
+		_0: _p47,
+		_1: _elm_lang$core$Native_Utils.update(
+			_p48,
+			{
+				keysDown: A2(_elm_lang$core$Set$insert, _p47, _p48.keysDown)
+			}),
+		_2: _elm_lang$core$Platform_Cmd$none
+	};
+};
+var _user$project$SvgAnimation$Game = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return function (l) {
+												return function (m) {
+													return function (n) {
+														return {dimensions: a, position: b, ai1: c, ai2: d, direction: e, previousDirection: f, isDead: g, blockSize: h, momentumSpeedCounter: i, directionMomentumCounter: j, upMomentumCounter: k, keysDown: l, keySum: m, score: n};
+													};
+												};
+											};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _user$project$SvgAnimation$Coords = F2(
+	function (a, b) {
+		return {x: a, y: b};
+	});
+var _user$project$SvgAnimation$Ai = F4(
+	function (a, b, c, d) {
+		return {pos: a, isDead: b, pic: c, direction: d};
+	});
+var _user$project$SvgAnimation$Platform = F5(
+	function (a, b, c, d, e) {
+		return {leftPos: a, rightPos: b, upPos: c, downPos: d, playerPos: e};
+	});
+var _user$project$SvgAnimation$NoDirection = {ctor: 'NoDirection'};
+var _user$project$SvgAnimation$Right = {ctor: 'Right'};
+var _user$project$SvgAnimation$Left = {ctor: 'Left'};
+var _user$project$SvgAnimation$init = {
+	dimensions: A2(_elm_lang$window$Window$Size, 0, 0),
+	position: {x: 350, y: 120},
+	ai1: {
+		pos: {x: 0, y: 50},
+		isDead: false,
+		pic: 0,
+		direction: _user$project$SvgAnimation$Right
+	},
+	ai2: {
+		pos: {x: 800, y: 250},
+		isDead: false,
+		pic: 0,
+		direction: _user$project$SvgAnimation$Left
+	},
+	direction: _user$project$SvgAnimation$NoDirection,
+	previousDirection: _user$project$SvgAnimation$NoDirection,
+	isDead: true,
+	blockSize: 0,
+	momentumSpeedCounter: 0,
+	directionMomentumCounter: 0,
+	upMomentumCounter: 0,
+	keysDown: _elm_lang$core$Set$empty,
+	keySum: 0,
+	score: 0
+};
+var _user$project$SvgAnimation$movePos = function (_p49) {
+	var _p50 = _p49;
+	var _p52 = _p50._1;
+	var _p51 = _elm_lang$core$List$sum(
+		_elm_lang$core$Set$toList(_p52.keysDown));
+	switch (_p51) {
+		case 32:
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					_p52,
+					{previousDirection: _p52.direction, upMomentumCounter: 12}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		case 65:
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					_p52,
+					{previousDirection: _p52.direction, direction: _user$project$SvgAnimation$Left, momentumSpeedCounter: -4}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		case 68:
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					_p52,
+					{previousDirection: _p52.direction, direction: _user$project$SvgAnimation$Right, momentumSpeedCounter: 4}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		case 97:
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					_p52,
+					{previousDirection: _p52.direction, direction: _user$project$SvgAnimation$Left, momentumSpeedCounter: -4, upMomentumCounter: 12}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		case 100:
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					_p52,
+					{previousDirection: _p52.direction, direction: _user$project$SvgAnimation$Right, momentumSpeedCounter: 4, upMomentumCounter: 12}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		default:
+			return {ctor: '_Tuple2', _0: _p52, _1: _elm_lang$core$Platform_Cmd$none};
+	}
+};
+var _user$project$SvgAnimation$momentum = function (_p53) {
+	var _p54 = _p53;
+	var _p55 = _p54._0;
+	var speed = _user$project$SvgAnimation$speedConversion(_p55);
+	var moreSpeed = ((_elm_lang$core$Native_Utils.cmp(_p55.momentumSpeedCounter, -8) > 0) && (_elm_lang$core$Native_Utils.cmp(_p55.momentumSpeedCounter, 8) < 0)) ? (_elm_lang$core$Native_Utils.eq(_p55.direction, _user$project$SvgAnimation$Left) ? -1 : 1) : 0;
+	var reset = _elm_lang$core$Native_Utils.eq(_p55.previousDirection, _p55.direction) ? _p55.momentumSpeedCounter : 0;
+	var newCounter = reset + moreSpeed;
+	return _elm_lang$core$Native_Utils.eq(_p55.direction, _user$project$SvgAnimation$Left) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p55,
+			{
+				position: {x: _p55.position.x - speed, y: _p55.position.y},
+				momentumSpeedCounter: newCounter
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : (_elm_lang$core$Native_Utils.eq(_p55.direction, _user$project$SvgAnimation$Right) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p55,
+			{
+				position: {x: _p55.position.x + speed, y: _p55.position.y},
+				momentumSpeedCounter: newCounter
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p55,
+			{
+				position: {x: _p55.position.x, y: _p55.position.y}
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	});
+};
+var _user$project$SvgAnimation$updateGame = function (model) {
+	return _user$project$SvgAnimation$pic2(
+		_user$project$SvgAnimation$pic(
+			_user$project$SvgAnimation$outOfScreen(
+				_user$project$SvgAnimation$rightPlatform(
+					_user$project$SvgAnimation$middlePlatform(
+						_user$project$SvgAnimation$leftPlatform(
+							_user$project$SvgAnimation$basePlatform(
+								_user$project$SvgAnimation$updateDirection(
+									_user$project$SvgAnimation$upMomentum(
+										_user$project$SvgAnimation$gravity(
+											_user$project$SvgAnimation$momentum(
+												_user$project$SvgAnimation$ai2collision(
+													_user$project$SvgAnimation$ai1collision(
+														_user$project$SvgAnimation$ai2Pos(
+															_user$project$SvgAnimation$ai1Pos(
+																_user$project$SvgAnimation$blockSize(model))))))))))))))));
+};
+var _user$project$SvgAnimation$update = F2(
+	function (msg, model) {
+		var _p56 = msg;
+		switch (_p56.ctor) {
+			case 'StartGame':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							isDead: false,
+							position: {x: 350, y: 120}
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'KeyDown':
+				return _user$project$SvgAnimation$movePos(
+					_user$project$SvgAnimation$insertKeys(
+						{ctor: '_Tuple3', _0: _p56._0, _1: model, _2: _elm_lang$core$Platform_Cmd$none}));
+			case 'KeyUp':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							keysDown: A2(_elm_lang$core$Set$remove, _p56._0, model.keysDown)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'SizeUpdated':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{dimensions: _p56._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'Nothing':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			default:
+				return _user$project$SvgAnimation$updateGame(model);
+		}
+	});
+var _user$project$SvgAnimation$Nothing = {ctor: 'Nothing'};
+var _user$project$SvgAnimation$Tick = function (a) {
+	return {ctor: 'Tick', _0: a};
+};
+var _user$project$SvgAnimation$tick = A2(_elm_lang$core$Time$every, 33 * _elm_lang$core$Time$millisecond, _user$project$SvgAnimation$Tick);
+var _user$project$SvgAnimation$SizeUpdated = function (a) {
+	return {ctor: 'SizeUpdated', _0: a};
+};
+var _user$project$SvgAnimation$initCmds = A2(_elm_lang$core$Task$perform, _user$project$SvgAnimation$SizeUpdated, _elm_lang$window$Window$size);
+var _user$project$SvgAnimation$windowDimensionsChanged = _elm_lang$window$Window$resizes(_user$project$SvgAnimation$SizeUpdated);
+var _user$project$SvgAnimation$KeyUp = function (a) {
+	return {ctor: 'KeyUp', _0: a};
+};
+var _user$project$SvgAnimation$KeyDown = function (a) {
+	return {ctor: 'KeyDown', _0: a};
+};
+var _user$project$SvgAnimation$subscriptions = function (model) {
+	var ticks = _user$project$SvgAnimation$tick;
+	var keysU = _elm_lang$keyboard$Keyboard$ups(_user$project$SvgAnimation$KeyUp);
+	var keysD = _elm_lang$keyboard$Keyboard$downs(_user$project$SvgAnimation$KeyDown);
+	var window = _user$project$SvgAnimation$windowDimensionsChanged;
+	return _elm_lang$core$Platform_Sub$batch(
+		{
+			ctor: '::',
+			_0: window,
+			_1: {
+				ctor: '::',
+				_0: keysD,
+				_1: {
+					ctor: '::',
+					_0: keysU,
+					_1: {
+						ctor: '::',
+						_0: ticks,
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		});
+};
+var _user$project$SvgAnimation$StartGame = {ctor: 'StartGame'};
+var _user$project$SvgAnimation$view = function (model) {
+	var pimage = _elm_lang$core$Native_Utils.eq(model.direction, _user$project$SvgAnimation$Right) ? ((_elm_lang$core$Native_Utils.cmp(model.upMomentumCounter, 9) > 0) ? './src/images/pf1.0.png' : './src/images/pf2.0.png') : ((_elm_lang$core$Native_Utils.cmp(model.upMomentumCounter, 9) > 0) ? './src/images/pf1.1.png' : './src/images/pf2.1.png');
+	var bs = model.blockSize;
+	var _p57 = _user$project$SvgAnimation$scale(model.dimensions);
+	var scaledWidth = _p57._0;
+	var scaledHeight = _p57._1;
+	var l4 = './src/images/l4.png';
+	var l3 = './src/images/l3.png';
+	var l2 = './src/images/l2.png';
+	var l1 = './src/images/l1.png';
+	var r4 = './src/images/r4.png';
+	var r3 = './src/images/r3.png';
+	var r2 = './src/images/r2.png';
+	var r1 = './src/images/r1.png';
+	var ai1Image = function () {
+		if (_elm_lang$core$Native_Utils.eq(model.ai1.direction, _user$project$SvgAnimation$Right)) {
+			var _p58 = model.ai1.pic;
+			switch (_p58) {
+				case 0:
+					return r1;
+				case 1:
+					return r1;
+				case 2:
+					return r2;
+				case 3:
+					return r2;
+				case 4:
+					return r3;
+				case 5:
+					return r3;
+				default:
+					return r4;
+			}
+		} else {
+			var _p59 = model.ai1.pic;
+			switch (_p59) {
+				case 0:
+					return l1;
+				case 1:
+					return l1;
+				case 2:
+					return l2;
+				case 3:
+					return l2;
+				case 4:
+					return l3;
+				case 5:
+					return l3;
+				default:
+					return l4;
+			}
+		}
+	}();
+	var ai2Image = function () {
+		if (_elm_lang$core$Native_Utils.eq(model.ai2.direction, _user$project$SvgAnimation$Right)) {
+			var _p60 = model.ai1.pic;
+			switch (_p60) {
+				case 0:
+					return r1;
+				case 1:
+					return r1;
+				case 2:
+					return r2;
+				case 3:
+					return r2;
+				case 4:
+					return r3;
+				case 5:
+					return r3;
+				default:
+					return r4;
+			}
+		} else {
+			var _p61 = model.ai1.pic;
+			switch (_p61) {
+				case 0:
+					return l1;
+				case 1:
+					return l1;
+				case 2:
+					return l2;
+				case 3:
+					return l2;
+				case 4:
+					return l3;
+				case 5:
+					return l3;
+				default:
+					return l4;
+			}
+		}
+	}();
+	var ai2Y = _elm_lang$core$Basics$toString(
+		_elm_lang$core$Basics$toFloat(model.ai2.pos.y) * model.blockSize);
+	var ai2X = _elm_lang$core$Basics$toString(
+		_elm_lang$core$Basics$toFloat(model.ai2.pos.x) * model.blockSize);
+	var ai1Y = _elm_lang$core$Basics$toString(
+		_elm_lang$core$Basics$toFloat(model.ai1.pos.y) * model.blockSize);
+	var ai1X = _elm_lang$core$Basics$toString(
+		_elm_lang$core$Basics$toFloat(model.ai1.pos.x) * model.blockSize);
+	var posY = _elm_lang$core$Basics$toString(
+		_elm_lang$core$Basics$toFloat(model.position.y) * model.blockSize);
+	var posX = _elm_lang$core$Basics$toString(
+		_elm_lang$core$Basics$toFloat(model.position.x) * model.blockSize);
+	return _elm_lang$core$Native_Utils.eq(model.isDead, false) ? A2(
+		_elm_lang$svg$Svg$svg,
+		{
+			ctor: '::',
+			_0: _elm_lang$svg$Svg_Attributes$width('100%'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$height('(toString(800*bs))'),
+				_1: {ctor: '[]'}
+			}
+		},
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$svg$Svg$image,
+					{
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$x('0'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$y('0'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$width(
+									_elm_lang$core$Basics$toString(800 * bs)),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$height(
+										_elm_lang$core$Basics$toString(400 * bs)),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$svg$Svg_Attributes$xlinkHref('./src/images/background.png'),
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {ctor: '[]'}
+			},
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$svg$Svg$image,
+						{
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$x(ai1X),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$y(ai1Y),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$width(
+										_elm_lang$core$Basics$toString(70 * bs)),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$svg$Svg_Attributes$height(
+											_elm_lang$core$Basics$toString(40 * bs)),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$svg$Svg_Attributes$xlinkHref(ai1Image),
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							}
+						},
+						{ctor: '[]'}),
+					_1: {ctor: '[]'}
+				},
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$svg$Svg$image,
+							{
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$x(ai2X),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$y(ai2Y),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$svg$Svg_Attributes$width(
+											_elm_lang$core$Basics$toString(70 * bs)),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$svg$Svg_Attributes$height(
+												_elm_lang$core$Basics$toString(40 * bs)),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$svg$Svg_Attributes$xlinkHref(ai2Image),
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							},
+							{ctor: '[]'}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$svg$Svg$image,
+							{
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$x(posX),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$y(posY),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$svg$Svg_Attributes$width(
+											_elm_lang$core$Basics$toString(50 * bs)),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$svg$Svg_Attributes$height(
+												_elm_lang$core$Basics$toString(50 * bs)),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$svg$Svg_Attributes$xlinkHref(pimage),
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							},
+							{ctor: '[]'}),
+						_1: {ctor: '[]'}
+					})))) : A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$button,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Events$onClick(_user$project$SvgAnimation$StartGame),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$svg$Svg$text('Click here to play'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$svg$Svg$text('   Instructions: use keys A (left), D (Right), Space (Up) to land on top of enemies.   '),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg$text('Your score is: '),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg$text(
+							_elm_lang$core$Basics$toString(model.score)),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		});
+};
+var _user$project$SvgAnimation$main = _elm_lang$html$Html$program(
+	{
+		init: {ctor: '_Tuple2', _0: _user$project$SvgAnimation$init, _1: _user$project$SvgAnimation$initCmds},
+		update: _user$project$SvgAnimation$update,
+		view: _user$project$SvgAnimation$view,
+		subscriptions: _user$project$SvgAnimation$subscriptions
+	})();

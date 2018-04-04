@@ -1,0 +1,34 @@
+var _user$project$MouseExample$view = function (model) {
+	return _elm_lang$html$Html$text(
+		_elm_lang$core$Basics$toString(model.position));
+};
+var _user$project$MouseExample$update = F2(
+	function (_p0, model) {
+		var _p1 = _p0;
+		var _p2 = _p1._0;
+		return {
+			ctor: '_Tuple2',
+			_0: {
+				position: {ctor: '_Tuple2', _0: _p2.x, _1: _p2.y}
+			},
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+var _user$project$MouseExample$init = {
+	ctor: '_Tuple2',
+	_0: {
+		position: {ctor: '_Tuple2', _0: 0, _1: 0}
+	},
+	_1: _elm_lang$core$Platform_Cmd$none
+};
+var _user$project$MouseExample$Model = function (a) {
+	return {position: a};
+};
+var _user$project$MouseExample$MouseMsg = function (a) {
+	return {ctor: 'MouseMsg', _0: a};
+};
+var _user$project$MouseExample$subscriptions = function (model) {
+	return _elm_lang$mouse$Mouse$moves(_user$project$MouseExample$MouseMsg);
+};
+var _user$project$MouseExample$main = _elm_lang$html$Html$program(
+	{init: _user$project$MouseExample$init, view: _user$project$MouseExample$view, update: _user$project$MouseExample$update, subscriptions: _user$project$MouseExample$subscriptions})();
